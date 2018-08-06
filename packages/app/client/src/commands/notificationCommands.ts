@@ -32,9 +32,9 @@
 //
 
 import store from '../data/store';
-import { CommandRegistryImpl } from '@bfemulator/sdk-shared';
-import { SharedConstants } from '@bfemulator/app-shared';
-import { Notification } from '@bfemulator/app-shared';
+import { CommandRegistryImpl } from '../../../../sdk/shared/built';
+import { SharedConstants, newNotification } from '../../../shared/built';
+import { Notification } from '../../../shared/built';
 import { getGlobal } from '../utils/getGlobal';
 import * as NotificationActions from '../data/action/notificationActions';
 
@@ -52,5 +52,18 @@ export function registerCommands(commandRegistry: CommandRegistryImpl) {
   // Removes a notification from the store / notification manager
   commandRegistry.registerCommand(Commands.Remove, (id: string) => {
     store.dispatch(NotificationActions.beginRemove(id));
+  });
+
+  commandRegistry.registerCommand('demo', () => {
+    const notification: Notification = newNotification('HIT ME');
+    notification.addButton('Demo', () => {
+      //
+      console.log('meow');
+      var a = 1 + 2 + 3;
+      console.log(a);
+      console.log(a + 5);
+      //
+    });
+    store.dispatch(NotificationActions.beginAdd(notification));
   });
 }

@@ -154,6 +154,12 @@ export const AppMenuBuilder = new class AppMenuBuilderImpl implements AppMenuBui
         click: () => {
           mainWindow.commandService.remoteCall(Bot.Close);
         }
+      },
+      {
+        label: 'Demo Notification',
+        click: () => {
+          mainWindow.commandService.remoteCall('demo');
+        }
       }];
 
     if (recentBots && recentBots.length) {
