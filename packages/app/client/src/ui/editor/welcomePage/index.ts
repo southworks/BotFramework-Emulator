@@ -31,37 +31,4 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import {
-  ArmTokenData,
-  AZURE_ARM_TOKEN_DATA_CHANGED,
-  AZURE_BEGIN_AUTH_WORKFLOW,
-  AzureAuthAction,
-} from '../action/azureAuthActions';
-
-export interface AzureAuthState {
-  access_token: string;
-  persistLogin: boolean;
-}
-
-const initialState: AzureAuthState = {
-  access_token: null,
-  persistLogin: false
-};
-
-export default function azureAuth(state: AzureAuthState = initialState, action: AzureAuthAction<ArmTokenData>)
-  : AzureAuthState {
-  const { payload = {}, type } = action;
-  const { access_token } = payload as ArmTokenData;
-
-  switch (type) {
-
-    case AZURE_BEGIN_AUTH_WORKFLOW:
-      return { ...state, access_token: 'invalid__' + Math.floor(Math.random() * 9999) };
-
-    case AZURE_ARM_TOKEN_DATA_CHANGED:
-      return { ...state, access_token };
-
-    default:
-      return state;
-  }
-}
+export * from './welcomePageContainer';

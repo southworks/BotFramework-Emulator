@@ -22,7 +22,7 @@ const use = [
       plugins: ['react-hot-loader/babel'],
     },
   },
-  'awesome-typescript-loader'
+  'ts-loader'
 ];
 const defaultConfig = {
   entry: {
@@ -40,7 +40,7 @@ const defaultConfig = {
       {
         test: /\.(tsx?)|(jsx)$/,
         exclude: [/node_modules/],
-        use: ['awesome-typescript-loader']
+        use: ['ts-loader']
       },
       {
         test: /\.css$/,
@@ -74,7 +74,6 @@ const defaultConfig = {
               namedExport: true,
               camelCase: true,
               sourcemaps: true,
-              camelCase: true,
               banner: '// This is a generated file. Changes are likely to result in being overwritten'
             }
           },

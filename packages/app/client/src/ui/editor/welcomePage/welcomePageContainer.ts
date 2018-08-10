@@ -31,37 +31,35 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import {
-  ArmTokenData,
-  AZURE_ARM_TOKEN_DATA_CHANGED,
-  AZURE_BEGIN_AUTH_WORKFLOW,
-  AzureAuthAction,
-} from '../action/azureAuthActions';
+import { hot } from 'react-hot-loader';
+import { connect } from 'react-redux';
+import { WelcomePage as WelcomePageComp, WelcomePageProps } from './welcomePage';
+import { RootState } from '../../../data/store';
+import { CommandServiceImpl } from '../../../platform/commands/commandServiceImpl';
+import { SharedConstants } from '@bfemulator/app-shared';
 
-export interface AzureAuthState {
-  access_token: string;
-  persistLogin: boolean;
+function mapStateToProps(state: RootState): WelcomePageProps {
+  return {
+    recentBots: state.bot.botFiles
+  };
 }
 
-const initialState: AzureAuthState = {
-  access_token: null,
-  persistLogin: false
-};
-
-export default function azureAuth(state: AzureAuthState = initialState, action: AzureAuthAction<ArmTokenData>)
-  : AzureAuthState {
-  const { payload = {}, type } = action;
-  const { access_token } = payload as ArmTokenData;
-
-  switch (type) {
-
-    case AZURE_BEGIN_AUTH_WORKFLOW:
-      return { ...state, access_token: 'invalid__' + Math.floor(Math.random() * 9999) };
-
-    case AZURE_ARM_TOKEN_DATA_CHANGED:
-      return { ...state, access_token };
-
-    default:
-      return state;
-  }
+function mapDispatchToProps(): WelcomePageProps {
+  const { Commands } = SharedConstants;
+  return {
+    onNewBotClick: () => {
+      CommandServiceImpl.call(Commands.UI.ShowBotCreationDialog).catch();
+    },
+    onOpenBotClick: () => {
+      CommandServiceImpl.call(Commands.Bot.OpenBrowse).catch();
+    },
+    onBotClick: (_e: any, path: string) => {
+      CommandServiceImpl.call(Commands.Bot.Switch, path).catch();
+    },
+    onDeleteBotClick: (_e: any, path: string) => {
+      CommandServiceImpl.remoteCall(Commands.Bot.RemoveFromBotList, path).catch();
+    }
+  };
 }
+
+export const WelcomePage = connect(mapStateToProps, mapDispatchToProps)(hot(module)(WelcomePageComp)) as any;
