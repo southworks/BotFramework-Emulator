@@ -45,6 +45,8 @@ import { StoreVisualizer } from '../debug/storeVisualizer';
 import { Editor } from '../../data/reducer/editor';
 import store from '../../data/store';
 import * as ExplorerActions from '../../data/action/explorerActions';
+import * as NotificationActions from '../../data/action/notificationActions';
+import { newNotification } from '@bfemulator/app-shared';
 
 export interface MainProps {
   primaryEditor?: Editor;
@@ -66,6 +68,33 @@ export class Main extends React.Component<MainProps, MainState> {
     this.state = {
       tabValue: 0
     };
+
+    // create a notification that creates a circle of bot icons
+    const notif = newNotification('There seems to be a lack of bots here...');
+    notif.addButton('Clear', () => {
+      const logos = document.body.getElementsByClassName('demo-logo');
+      for (let i = 0; i < logos.length; i++) {
+        const logo = logos.item(i);
+        logo.remove();
+      }
+    });
+    notif.addButton('Fix it!', () => {
+      const numOfLogos = 100;
+      for (let i = 0; i < numOfLogos; i++) {
+        const logo = document.createElement('div');
+        logo.className = 'demo-logo';
+        logo.style.position = 'absolute';
+        logo.style.top = (Math.random() * 100).toString() + '%',
+        logo.style.left = (Math.random() * 100).toString() + '%';
+        logo.style.background = `url('external/media/ic_bot_framework.svg')`;
+        logo.style.backgroundSize = '50px';
+        logo.style.height = '50px';
+        logo.style.width = '50px';
+        logo.style.pointerEvents = 'none';
+        document.body.appendChild(logo);
+      }
+    });
+    store.dispatch(NotificationActions.beginAdd(notif));
   }
 
   componentWillReceiveProps(newProps: any) {
