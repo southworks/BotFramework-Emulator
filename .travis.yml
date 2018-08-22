@@ -9,12 +9,11 @@ install:
 - echo install step
 script:
 - echo build script
-after_success:
+
+before_deploy:
 - echo Prepare deploy
 - test ! $TRAVIS_TAG && TRAVIS_TAG="4.0.0.$(git log --format=%h -1)-nightly"
 - bash generate_releases.sh && echo $TRAVIS_TAG
-before_deploy:
-- echo Deploy triggered!!
 
 deploy:
   provider: releases
