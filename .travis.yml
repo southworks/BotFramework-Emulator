@@ -7,14 +7,33 @@ notifications:
   email: false
 
 before_install:
-- npm install
+- echo before install
 
 install:
-- npm run bootstrap
+- echo install step
 
 script:
-- npm run build
-- npm run test:coveralls
+- echo build script
+
+after_success:
+- echo Prepare deploy
+- test $TRAVIS_TAG = ""
+  && TRAVIS_TAG="4.0.0.$(git log --format=%h -1)-nightly"
+  && git tag $TRAVIS_TAG
+- bash generate_releases.sh
+  && git describe --tags
+  && echo $TRAVIS_TAG
+
+before_deploy:
+- echo Deploy triggered!!
+
+deploy:
+  provider: releases
+  api_key: "GITHUB OAUTH TOKEN"
+  file: releses/**/*
+  skip_cleanup: true
+  on:
+    tags: true
 
 cache:
   directories:
