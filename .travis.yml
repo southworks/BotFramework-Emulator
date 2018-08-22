@@ -11,9 +11,9 @@ script:
 - echo build script
 
 before_deploy:
-- echo Prepare deploy
+- echo Prepare deploy with TRAVIS_TAG = $TRAVIS_TAG
 - test ! $TRAVIS_TAG && TRAVIS_TAG="4.0.0.$(git log --format=%h -1)-nightly"
-- bash generate_releases.sh && echo $TRAVIS_TAG
+- bash generate_releases.sh && echo Generated Releases for TRAVIS_TAG =  $TRAVIS_TAG
 
 deploy:
   provider: releases
@@ -26,7 +26,7 @@ deploy:
   body: This release is an early preview of the new Bot Framework Emulator. Please consider it to be experimental, and we'd love to hear your feedback.
   on:
     all_branches: true
-    tags: true
+    # tags: true
 
 cache:
   directories:
