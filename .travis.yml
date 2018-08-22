@@ -1,34 +1,25 @@
 language: node_js
-
 node_js:
-- "lts/*"
-
+- lts/*
 notifications:
   email: false
-
 before_install:
 - echo before install
-
 install:
 - echo install step
-
 script:
 - echo build script
-
 after_success:
 - echo Prepare deploy
-- test ! $TRAVIS_TAG
-  && TRAVIS_TAG="4.0.0.$(git log --format=%h -1)-nightly"
-- bash generate_releases.sh
-  && echo $TRAVIS_TAG
-
+- test ! $TRAVIS_TAG && TRAVIS_TAG="4.0.0.$(git log --format=%h -1)-nightly"
+- bash generate_releases.sh && echo $TRAVIS_TAG
 before_deploy:
 - echo Deploy triggered!!
 
 deploy:
   provider: releases
   api_key:
-    secure: 2ddUczomBWChBLu9WVzVl3dWWuCq0GBg712/NTTdVREmfIMabFvz37XYEPMpVplTSLMepnqSkfZq61MBQt0cbm24ge0TnVCBP9jQsBLA8zKRM/iFo8nqyZRblQnAFnkzCz0a313qpnimN1/Y986p1HaAklkeOzEgChucbAryqbHaBd/l/EkXA604Vpz5fGnVJlVPzM0sjAMhFaNO8d0O+DbwpFjmk63TSEXkTZDSg8S8pG44y2UsKFKwT6GQoPrXCmRJ/1cvv7lS/WCOqnmnZfUWdWyQls8zzx6tkpUixWU0kEQHPnGOgYNnjVP8JLeNAAJKEN+69YBc+gwYxOzR5Zws+HkquPlOmhW6ffX0TEOqx1i+ssOZxAIB6Jj+UrJtqMzr9UjjPBBVWTtcQ3WdkHJLrH337ZAyf8wnsZkuifrHobME1SkAQVidvwdAZhOtvsZlmECfJTsirQ+gfkM5sO97btIjuyn6l9gxFyQ8EsoEpbGXN5yUqZOlK+l7XRvjZoM6x1frxbAw12VZ3Xs3ov+ozcTO2pfkZhGuOUeTHkvMAqJcQ2OY7sTcITmABOikhfvrl1XKhnEaKXMzbwEZXk7hNPyHiL3vrzMwVKuVw9vLPe3GcDxbp95PUEslnXweovnlPprnUHjmgpJq6jLJXaBykg+HKa9ecB4O/sAGsYo=
+    secure: Am8pWtOYVUUjPpBfaLhP5AN4LC8xWRgnqtLZIpRz32k848vFUkVQxbMVYHdsPbYJUdckzqt6shFuctRsJnHrF670inJglTFXfCNi9JSJHKVoDfGZaDMYvRf9gaSL6CmBmz/OH4wFfArMTPb1FgX7FubfNEkVPvZVWfFToR0Sc/0Xpx1Hu+aW4Cf/2o0Nsixn/36/Kak5gJTq+6lF3T9nLLYy4tKk808sF9Flw5KVdKdTJ7uhfvjboWuyTSHxfg6Vk3OlWz94oXXzFNdA88FoyHZTifBgQwUDQ9rONhAzmgy+g0u7myoFox8iPgIif1FAacKY24sJmcG3O/wwYAxqs340xA8VEccwSJ3Sod680i1Q3zaJk00akulLtGovhtCXO3aqG//hfts0Y9Hn7cpkpo5SOlOyEz3oPXD2CDrDZZwJ0aEv+vP2eGQ/T6vppj/WIO+d3lvxhMarZ1/P1Wb3LUADvE9G5bOAPCk38mzaOkBMyVO8Xcv2S/GVLWqaR+GwxubUwOL1fxvxazhfgtGdEYGoLWZWW+5IdeBYcPmsfPFDdX1zucroGdAddBc9RL2YMc/oCxRGVRX5QdxoUwgRKXQAn5sxNLrCgLnTzpJsAvKDN2ro6G+huVF7tcQIoW3j6Rh8heZ4FsevH5cuNqWn7MSbndxoa2WXaZDCSJH9l8I=
   file: releases/**/*
   skip_cleanup: true
   prerelease: true
@@ -40,4 +31,4 @@ deploy:
 
 cache:
   directories:
-  - "node_modules"
+  - node_modules
