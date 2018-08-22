@@ -20,6 +20,7 @@ after_success:
 - test ! $TRAVIS_TAG
   && TRAVIS_TAG="4.0.0.$(git log --format=%h -1)-nightly"
   && git tag $TRAVIS_TAG
+  && git branch
 - bash generate_releases.sh
   && git describe --tags
   && echo $TRAVIS_TAG
