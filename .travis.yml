@@ -3,16 +3,22 @@ node_js:
 - lts/*
 notifications:
   email: false
+
 before_install:
-- echo before install
+- npm install -g lerna@2.11.x webpack@4.8.x jest
+- lerna clean --yes
+
 install:
-- echo install step
+- lerna bootstrap --hoist
+
 script:
-- echo build script
+- npm run build && npm run test:coveralls
+
+after_success:
+- echo Generate new TRAVIS_TAG (current value) = $TRAVIS_TAG
+- test $TRAVIS_EVENT_TYPE = "cron" && test ! $TRAVIS_TAG && TRAVIS_TAG="4.0.0.$(git log --format=%h -1)-nightly"
 
 before_deploy:
-- echo Prepare deploy with TRAVIS_TAG = $TRAVIS_TAG
-- test ! $TRAVIS_TAG && TRAVIS_TAG="4.0.0.$(git log --format=%h -1)-nightly"
 - bash generate_releases.sh && echo Generated Releases for TRAVIS_TAG =  $TRAVIS_TAG
 
 deploy:
@@ -25,8 +31,8 @@ deploy:
   name: $TRAVIS_TAG
   body: This release is an early preview of the new Bot Framework Emulator. Please consider it to be experimental, and we'd love to hear your feedback.
   on:
-    all_branches: true
-    # tags: true
+    branch: v4
+    tags: true
 
 cache:
   directories:
