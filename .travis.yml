@@ -17,7 +17,7 @@ script:
 
 after_success:
 - echo Prepare deploy
-- test $TRAVIS_TAG = ""
+- test ! $TRAVIS_TAG
   && TRAVIS_TAG="4.0.0.$(git log --format=%h -1)-nightly"
   && git tag $TRAVIS_TAG
 - bash generate_releases.sh
@@ -29,9 +29,13 @@ before_deploy:
 
 deploy:
   provider: releases
-  api_key: "GITHUB OAUTH TOKEN"
-  file: releses/**/*
+  api_key:
+    secure: 2ddUczomBWChBLu9WVzVl3dWWuCq0GBg712/NTTdVREmfIMabFvz37XYEPMpVplTSLMepnqSkfZq61MBQt0cbm24ge0TnVCBP9jQsBLA8zKRM/iFo8nqyZRblQnAFnkzCz0a313qpnimN1/Y986p1HaAklkeOzEgChucbAryqbHaBd/l/EkXA604Vpz5fGnVJlVPzM0sjAMhFaNO8d0O+DbwpFjmk63TSEXkTZDSg8S8pG44y2UsKFKwT6GQoPrXCmRJ/1cvv7lS/WCOqnmnZfUWdWyQls8zzx6tkpUixWU0kEQHPnGOgYNnjVP8JLeNAAJKEN+69YBc+gwYxOzR5Zws+HkquPlOmhW6ffX0TEOqx1i+ssOZxAIB6Jj+UrJtqMzr9UjjPBBVWTtcQ3WdkHJLrH337ZAyf8wnsZkuifrHobME1SkAQVidvwdAZhOtvsZlmECfJTsirQ+gfkM5sO97btIjuyn6l9gxFyQ8EsoEpbGXN5yUqZOlK+l7XRvjZoM6x1frxbAw12VZ3Xs3ov+ozcTO2pfkZhGuOUeTHkvMAqJcQ2OY7sTcITmABOikhfvrl1XKhnEaKXMzbwEZXk7hNPyHiL3vrzMwVKuVw9vLPe3GcDxbp95PUEslnXweovnlPprnUHjmgpJq6jLJXaBykg+HKa9ecB4O/sAGsYo=
+  file: releases/**/*
   skip_cleanup: true
+  prerelease: true
+  name: $TRAVIS_TAG
+  body: This release is an early preview of the new Bot Framework Emulator. Please consider it to be experimental, and we'd love to hear your feedback.
   on:
     tags: true
 
