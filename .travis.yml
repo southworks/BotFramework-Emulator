@@ -18,11 +18,8 @@ script:
 after_success:
 - echo Prepare deploy
 - test ! $TRAVIS_TAG
-  && git checkout $TRAVIS_BRANCH
   && TRAVIS_TAG="4.0.0.$(git log --format=%h -1)-nightly"
-  && git branch
 - bash generate_releases.sh
-  && git describe --tags
   && echo $TRAVIS_TAG
 
 before_deploy:
@@ -38,6 +35,7 @@ deploy:
   name: $TRAVIS_TAG
   body: This release is an early preview of the new Bot Framework Emulator. Please consider it to be experimental, and we'd love to hear your feedback.
   on:
+    all_branches: true
     tags: true
 
 cache:
