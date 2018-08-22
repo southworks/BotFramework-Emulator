@@ -18,6 +18,7 @@ script:
 after_success:
 - echo Prepare deploy
 - test ! $TRAVIS_TAG
+  && git checkout $TRAVIS_BRANCH
   && TRAVIS_TAG="4.0.0.$(git log --format=%h -1)-nightly"
   && git branch
 - bash generate_releases.sh
