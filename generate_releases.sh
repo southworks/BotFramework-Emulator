@@ -1,9 +1,21 @@
 echo Pack releases
 cd ./packages/app/main/
-gulp package:windows-nsis:binaries
-gulp package:mac:binaries
-gulp package:linux
+
+gulp clean
+gulp stage:windows
+gulp redist:windows-nsis:binaries
+
+gulp clean
+gulp stage:mac
+gulp redist:mac:binaries
+
+gulp clean
+gulp stage:linux
+gulp redist:linux
+
 cd ./dist/
+
+echo Files to dist
 
 for filename in *; do
   echo $filename
