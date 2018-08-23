@@ -5,7 +5,7 @@ notifications:
   email: false
 
 before_install:
-- npm install -g lerna@2.11.x webpack@4.8.x jest
+- npm install -g lerna@2.11.x webpack@4.8.x jest glup-cli
 - lerna clean --yes
 
 install:
@@ -19,7 +19,7 @@ after_success:
 - test $TRAVIS_EVENT_TYPE = "cron" && test ! $TRAVIS_TAG && TRAVIS_TAG="4.0.0.$(git log --format=%h -1)-nightly"
 
 before_deploy:
-- bash generate_releases.sh && echo Generated Releases for TRAVIS_TAG =  $TRAVIS_TAG
+- bash generate_releases.sh && echo Generated Releases for TRAVIS_TAG = $TRAVIS_TAG
 
 deploy:
   provider: releases
