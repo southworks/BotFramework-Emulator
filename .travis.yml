@@ -16,7 +16,7 @@ script:
 
 after_success:
 - echo Generate new TRAVIS_TAG (current value) = $TRAVIS_TAG
-- TRAVIS_TAG="4.0.0.$(git log --format=%h -1)-nightly"
+- TRAVIS_TAG="4.0.$TRAVIS_BUILD_NUMBER-nightly"
 
 before_deploy:
 - bash generate_releases.sh && echo Generated Releases for TRAVIS_TAG = $TRAVIS_TAG
