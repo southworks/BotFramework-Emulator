@@ -5,7 +5,7 @@ notifications:
   email: false
 
 before_install:
-- npm install -g lerna@2.11.x webpack@4.8.x jest glup-cli
+- npm install -g lerna@2.11.x webpack@4.8.x jest gulp-cli
 - lerna clean --yes
 
 install:
@@ -16,7 +16,7 @@ script:
 
 after_success:
 - echo Generate new TRAVIS_TAG (current value) = $TRAVIS_TAG
-- test $TRAVIS_EVENT_TYPE = "cron" && test ! $TRAVIS_TAG && TRAVIS_TAG="4.0.0.$(git log --format=%h -1)-nightly"
+- TRAVIS_TAG="4.0.0.$(git log --format=%h -1)-nightly"
 
 before_deploy:
 - bash generate_releases.sh && echo Generated Releases for TRAVIS_TAG = $TRAVIS_TAG
@@ -24,7 +24,7 @@ before_deploy:
 deploy:
   provider: releases
   api_key:
-    secure: Am8pWtOYVUUjPpBfaLhP5AN4LC8xWRgnqtLZIpRz32k848vFUkVQxbMVYHdsPbYJUdckzqt6shFuctRsJnHrF670inJglTFXfCNi9JSJHKVoDfGZaDMYvRf9gaSL6CmBmz/OH4wFfArMTPb1FgX7FubfNEkVPvZVWfFToR0Sc/0Xpx1Hu+aW4Cf/2o0Nsixn/36/Kak5gJTq+6lF3T9nLLYy4tKk808sF9Flw5KVdKdTJ7uhfvjboWuyTSHxfg6Vk3OlWz94oXXzFNdA88FoyHZTifBgQwUDQ9rONhAzmgy+g0u7myoFox8iPgIif1FAacKY24sJmcG3O/wwYAxqs340xA8VEccwSJ3Sod680i1Q3zaJk00akulLtGovhtCXO3aqG//hfts0Y9Hn7cpkpo5SOlOyEz3oPXD2CDrDZZwJ0aEv+vP2eGQ/T6vppj/WIO+d3lvxhMarZ1/P1Wb3LUADvE9G5bOAPCk38mzaOkBMyVO8Xcv2S/GVLWqaR+GwxubUwOL1fxvxazhfgtGdEYGoLWZWW+5IdeBYcPmsfPFDdX1zucroGdAddBc9RL2YMc/oCxRGVRX5QdxoUwgRKXQAn5sxNLrCgLnTzpJsAvKDN2ro6G+huVF7tcQIoW3j6Rh8heZ4FsevH5cuNqWn7MSbndxoa2WXaZDCSJH9l8I=
+    secure: Am8pWtOYVOOjPpBfaLhP5AN4LC8xWRgnqtLZIpRz32k848vFUkVQxbMVYHdsPbYJUdckzqt6shFuctRsJnHrF670inJglTFXfCNi9JSJHKVoDfGZaDMYvRf9gaSL6CmBmz/OH4wFfArMTPb1FgX7FubfNEkVPvZVWfFToR0Sc/0Xpx1Hu+aW4Cf/2o0Nsixn/36/Kak5gJTq+6lF3T9nLLYy4tKk808sF9Flw5KVdKdTJ7uhfvjboWuyTSHxfg6Vk3OlWz94oXXzFNdA88FoyHZTifBgQwUDQ9rONhAzmgy+g0u7myoFox8iPgIif1FAacKY24sJmcG3O/wwYAxqs340xA8VEccwSJ3Sod680i1Q3zaJk00akulLtGovhtCXO3aqG//hfts0Y9Hn7cpkpo5SOlOyEz3oPXD2CDrDZZwJ0aEv+vP2eGQ/T6vppj/WIO+d3lvxhMarZ1/P1Wb3LUADvE9G5bOAPCk38mzaOkBMyVO8Xcv2S/GVLWqaR+GwxubUwOL1fxvxazhfgtGdEYGoLWZWW+5IdeBYcPmsfPFDdX1zucroGdAddBc9RL2YMc/oCxRGVRX5QdxoUwgRKXQAn5sxNLrCgLnTzpJsAvKDN2ro6G+huVF7tcQIoW3j6Rh8heZ4FsevH5cuNqWn7MSbndxoa2WXaZDCSJH9l8I=
   file: releases/**/*
   skip_cleanup: true
   prerelease: true
