@@ -3,17 +3,14 @@ cd ./packages/app/main/
 
 npm version $TRAVIS_TAG
 
-gulp clean
+gulp stage:linux
+gulp redist:linux
+
 gulp stage:windows
 gulp redist:windows-nsis:binaries
 
-gulp clean
 gulp stage:mac
 gulp redist:mac:binaries
-
-gulp clean
-gulp stage:linux
-gulp redist:linux
 
 cd ./dist/
 

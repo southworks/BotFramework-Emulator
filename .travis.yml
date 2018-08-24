@@ -5,7 +5,7 @@ notifications:
   email: false
 
 before_install:
-- npm install -g lerna@2.11.x webpack@4.8.x jest gulp-cli
+- npm i -g lerna@2.11.x gulp@4.0.0 gulp-cli@2.0.1 webpack@4.8.x jest
 - lerna clean --yes
 
 install:
