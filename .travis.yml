@@ -10,14 +10,14 @@ notifications:
   email: false
 
 before_install:
-- npm i -g lerna@2.11.x webpack@4.8.x jest
+- npm i -g lerna@2.11.x
 - lerna clean --yes
 
 install:
-- lerna bootstrap --hoist
+- echo install
 
 script:
-- npm run build && npm run test:coveralls
+- echo build
 
 after_success:
 - echo "Cheking TRAVIS_EVENT_TYPE is cron -> TRAVIS_EVENT_TYPE = $TRAVIS_EVENT_TYPE"
@@ -25,13 +25,6 @@ after_success:
 
 before_deploy:
 - TRAVIS_TAG=$BUILD_TAG
-- mkdir releases
-- |
-  if [ "$TRAVIS_OS_NAME" == "linux" ]; then
-    docker run --rm --env TRAVIS_TAG=$TRAVIS_TAG -v ${PWD}:/project electronuserland/builder:wine /bin/bash generate_releases.sh
-  else
-    /bin/bash generate_releases.sh
-  fi
 - echo Generated Releases for BUILD_TAG = $BUILD_TAG
 
 deploy:
