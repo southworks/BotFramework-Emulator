@@ -43,14 +43,13 @@ const mapDispatchToProps = (dispatch: (action: Action) => void): OpenBotDialogPr
   return {
     openBot: (componentState: OpenBotDialogState) => {
       DialogService.hideDialog();
-      const { appId = '', appPassword = '', botUrl = '', botTranscriptPath = '' } = componentState;
+      const { appId = '', appPassword = '', botUrl = '' } = componentState;
       if (botUrl.startsWith('http')) {
         dispatch(
           openBotViaUrlAction({
             appId,
             appPassword,
             endpoint: botUrl,
-            transcriptPath: botTranscriptPath,
           })
         );
       } else {

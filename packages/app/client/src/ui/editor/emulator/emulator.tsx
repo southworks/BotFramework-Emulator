@@ -176,14 +176,18 @@ export class EmulatorComponent extends React.Component<EmulatorProps, {}> {
 
     const userId = requireNewUserId ? uniqueIdv4() : props.document.userId;
     if (requireNewUserId) {
-      await CommandServiceImpl.remoteCall(SharedConstants.Commands.Emulator.SetCurrentUser, userId);
+      await CommandServiceImpl.remoteCall(
+        SharedConstants.Commands.Emulator.SetCurrentUser,
+        '9ec97590-5894-47df-9c26-de692ed12155'
+      );
     }
+    console.log(userId);
 
     const options = {
       conversationId,
       conversationMode: props.mode,
       endpointId: props.endpointId,
-      userId,
+      userId: '9ec97590-5894-47df-9c26-de692ed12155',
     };
 
     if (props.document.directLine) {
