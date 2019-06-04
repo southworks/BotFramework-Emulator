@@ -32,11 +32,11 @@
 //
 
 import * as React from 'react';
+import { MouseEvent } from 'react';
 import * as ReactDom from 'react-dom';
 
 import { SplitterPane } from './pane';
 import * as styles from './splitter.scss';
-import { MouseEvent } from 'react';
 
 const DEFAULT_PANE_SIZE = 200;
 const MIN_PANE_SIZE = 0;
