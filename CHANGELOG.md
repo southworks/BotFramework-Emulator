@@ -5,6 +5,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## Added
+- [main/shared] Added 'Clear State' menu item in PR [1596](https://github.com/microsoft/BotFramework-Emulator/pull/1596)
+
+## v4.4.2 - 2019 - 05 - 28
+## Fixed
+- [client] Fixed issue where the slider control was getting stuck when dragging next to a webview element in PR [1546](https://github.com/microsoft/BotFramework-Emulator/pull/1546)
+- [client] Fixed issue where selecting an autocomplete result with the mouse was losing focus in PR [1554](https://github.com/microsoft/BotFramework-Emulator/pull/1554)
+- [client] Fixed issue where tab icon for sidecar debugging docs page was shrinking in PR [1557](https://github.com/microsoft/BotFramework-Emulator/pull/1557)
+- [build] Fixed issue where the NSIS installer was requiring admin permissions to run, causing auto update to fail when attempting to install in PR [1562](https://github.com/microsoft/BotFramework-Emulator/pull/1562)
+- [main] Added type 'button' to cancel button #1504 in PR [1551](https://github.com/microsoft/BotFramework-Emulator/pull/1551)
+- [luis] Fixed the spinner issue when publishin LUIS after training #1572 in PR [1582](https://github.com/microsoft/BotFramework-Emulator/pull/1582)
+- [client / main] Corrected user id logic in PR [1590](https://github.com/microsoft/BotFramework-Emulator/pull/1590)
 
 ## v4.4.1 - 2019 - 05 - 06
 ## Added
@@ -14,10 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [client/main] Show unauthorized signals when connecting to bots with credentials in PR [1522](https://github.com/microsoft/BotFramework-Emulator/pull/1522)
 - [main] Bumps `botframework-config` to v4.4.0 to address issues encrypting and decrypting .bot files in PR [1521](https://github.com/microsoft/BotFramework-Emulator/pull/1521)
 - [luis] Added ability to scroll within editor section of LUIS inspector and made inspector scrollbars thinner in PR [#1516](https://github.com/Microsoft/BotFramework-Emulator/pull/1516)
-- [client] Fixed issue where the slider control was getting stuck when dragging next to a webview element in PR [1546](https://github.com/microsoft/BotFramework-Emulator/pull/1546)
-- [client] Fixed issue where selecting an autocomplete result with the mouse was losing focus in PR [1554](https://github.com/microsoft/BotFramework-Emulator/pull/1554)
-- [client] Fixed issue where tab icon for sidecar debugging docs page was shrinking in PR [1557](https://github.com/microsoft/BotFramework-Emulator/pull/1557)
-- [build] Fixed issue where the NSIS installer was requiring admin permissions to run, causing auto update to fail when attempting to install in PR [1562](https://github.com/microsoft/BotFramework-Emulator/pull/1562)
+
 
 ## v4.4.0 - 2019 - 05 - 03
 ## Added
@@ -44,7 +53,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [main] Fixed issue where opening a livechat or bot via protocol wasn't working because ngrok wasn't being started on startup in PR [1446](https://github.com/Microsoft/BotFramework-Emulator/pull/1446)
 - [main / client] Got rid of node Buffer() deprecation warnings in PR [1426](https://github.com/Microsoft/BotFramework-Emulator/pull/1426)
 - [client] Fixed LUIS No Models modal issues #1471 in PR [1484](https://github.com/Microsoft/BotFramework-Emulator/pull/1484)
-  [client] Added type 'button' to cancel button #1504 in PR [1551](https://github.com/microsoft/BotFramework-Emulator/pull/1551)
+
 
 ## Removed
 - [main] Removed custom user agent string from outgoing requests in PR [1427](https://github.com/Microsoft/BotFramework-Emulator/pull/1427)

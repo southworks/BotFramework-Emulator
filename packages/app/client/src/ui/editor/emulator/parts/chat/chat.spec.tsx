@@ -36,19 +36,44 @@ import { mount, ReactWrapper } from 'enzyme';
 import { Provider } from 'react-redux';
 import ReactWebChat, { createDirectLine } from 'botframework-webchat';
 import { ActivityTypes } from 'botframework-schema';
-import { DebugMode, ValueTypes } from '@bfemulator/app-shared';
+import { ValueTypes } from '@bfemulator/app-shared';
 import { combineReducers, createStore } from 'redux';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
-import { CommandServiceImpl } from '../../../../../platform/commands/commandServiceImpl';
-import { EmulatorMode } from '../../emulator';
 import { bot } from '../../../../../data/reducer/bot';
 import { chat } from '../../../../../data/reducer/chat';
 import { editor } from '../../../../../data/reducer/editor';
 import { clientAwareSettings } from '../../../../../data/reducer/clientAwareSettingsReducer';
+import { BotCommands } from '../../../../../commands/botCommands';
 
 import webChatStyleOptions from './webChatTheme';
 import { ChatContainer } from './chatContainer';
 import { ChatProps } from './chat';
+
+jest.mock('electron', () => ({
+  ipcMain: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+  ipcRenderer: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+}));
 
 const mockStore = createStore(combineReducers({ bot, chat, clientAwareSettings, editor }), {
   clientAwareSettings: {
@@ -74,13 +99,14 @@ const defaultDocument = {
   }),
   inspectorObjects: [],
   botId: '456',
+  mode: 'livechat',
 };
 
 function render(overrides: Partial<ChatProps> = {}): ReactWrapper {
   const props = {
     document: defaultDocument,
     endpoint: {},
-    mode: 'livechat' as EmulatorMode,
+    mode: 'livechat',
     onStartConversation: jest.fn(),
     locale: 'en-US',
     selectedActivity: {},
@@ -95,6 +121,14 @@ function render(overrides: Partial<ChatProps> = {}): ReactWrapper {
 }
 
 describe('<ChatContainer />', () => {
+  let commandService: CommandServiceImpl;
+  beforeAll(() => {
+    new BotCommands();
+    const decorator = CommandServiceInstance();
+    const descriptor = decorator({ descriptor: {} }, 'none') as any;
+    commandService = descriptor.descriptor.get();
+  });
+
   describe('when there is no direct line client', () => {
     it('renders a `not connected` message', () => {
       const component = render({ document: {} } as any);
@@ -140,9 +174,9 @@ describe('<ChatContainer />', () => {
       expect(activityWrapper.text()).toEqual('a child node');
     });
 
-    it('should render a trace activity as a message when the debugMode is set to "sidecar"', () => {
+    it('should render a trace activity as a message when the mode is set to "debug"', () => {
       const next = () => (kids: any) => kids;
-      const webChat = render({ debugMode: DebugMode.Sidecar }).find(ReactWebChat);
+      const webChat = render({ document: { ...defaultDocument, mode: 'debug' } as any }).find(ReactWebChat);
       const card = {
         activity: {
           id: 'activity-id',
@@ -166,9 +200,9 @@ describe('<ChatContainer />', () => {
       expect(activityWrapper.text()).toEqual('a child node');
     });
 
-    it('should render a trace activity as a bot state when the debugMode is set to "sidecar"', () => {
+    it('should render a trace activity as a bot state when the mode is set to "debug"', () => {
       const next = () => (kids: any) => kids;
-      const webChat = render({ debugMode: DebugMode.Sidecar }).find(ReactWebChat);
+      const webChat = render({ document: { ...defaultDocument, mode: 'debug' } as any }).find(ReactWebChat);
       const card = {
         activity: {
           valueType: ValueTypes.BotState,
@@ -208,7 +242,7 @@ describe('<ChatContainer />', () => {
 
   describe('speech services', () => {
     it('displays a message when fetching the speech token', () => {
-      (CommandServiceImpl as any).remoteCall = jest.fn();
+      commandService.remoteCall = jest.fn().mockResolvedValueOnce(true);
       const component = render({ pendingSpeechTokenRetrieval: true });
       expect(component.find('div').text()).toEqual('Connecting...');
     });
@@ -222,9 +256,7 @@ describe('event handlers', () => {
   });
   it('should invoke the appropriate functions defined in the props', () => {
     const next = () => (kids: any) => kids;
-    const chat = render({
-      debugMode: DebugMode.Sidecar,
-    });
+    const chat = render({ document: { ...defaultDocument, mode: 'debug' } as any });
     const card = {
       activity: {
         valueType: ValueTypes.BotState,

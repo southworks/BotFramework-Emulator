@@ -31,13 +31,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 import '../../fetchProxy';
-import { DebugMode, Settings, settingsDefault, SharedConstants } from '@bfemulator/app-shared';
+import { Settings, settingsDefault, SharedConstants } from '@bfemulator/app-shared';
 import { applyMiddleware, createStore, Store } from 'redux';
 import sagaMiddlewareFactory from 'redux-saga';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import reducers from '../reducers';
-import { debugModeChanged, rememberTheme } from '../actions/windowStateActions';
-import { mainWindow } from '../../main';
+import { rememberTheme } from '../actions/windowStateActions';
 
 import { settingsSagas } from './settingsSagas';
 
@@ -67,21 +67,42 @@ jest.mock('../store', () => ({
   },
 }));
 
-jest.mock('../../main', () => ({
-  mainWindow: {
-    commandService: {
-      call: async => true,
-      remoteCall: async => true,
-    },
-  },
-}));
 const sagaMiddleWare = sagaMiddlewareFactory();
 
 jest.mock('electron', () => ({
   app: { getAppPath: () => '' },
+  ipcMain: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+  ipcRenderer: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
 }));
 
 describe('The SettingsSagas', () => {
+  let commandService: CommandServiceImpl;
+  beforeAll(() => {
+    const decorator = CommandServiceInstance();
+    const descriptor = decorator({ descriptor: {} }, 'none') as any;
+    commandService = descriptor.descriptor.get();
+  });
+
   beforeEach(() => {
     mockStore = createStore(
       reducers,
@@ -95,32 +116,8 @@ describe('The SettingsSagas', () => {
   });
 
   it('should remember a theme change and dispatch', () => {
-    const commandServiceSpy = jest.spyOn(mainWindow.commandService, 'remoteCall');
+    const commandServiceSpy = jest.spyOn(commandService, 'remoteCall');
     mockStore.dispatch(rememberTheme('myTheme'));
     expect(commandServiceSpy).toHaveBeenCalledWith(SharedConstants.Commands.UI.SwitchTheme, 'myTheme', 'myTheme.scss');
-  });
-
-  it('should orchestrate the changes needed when switching debug modes', async () => {
-    const localCommandServiceSpy = jest.spyOn(mainWindow.commandService, 'call').mockResolvedValue(true);
-    const remoteCommandServiceSpy = jest.spyOn(mainWindow.commandService, 'remoteCall');
-
-    mockStore.dispatch(debugModeChanged(DebugMode.Sidecar));
-    expect(localCommandServiceSpy).toHaveBeenCalledWith(
-      SharedConstants.Commands.Electron.ShowMessageBox,
-      true,
-      jasmine.any(Object)
-    );
-    await Promise.resolve(true); // Wait for ShowMessageBox to resolve
-    expect(localCommandServiceSpy).toHaveBeenCalledWith(SharedConstants.Commands.Ngrok.KillProcess);
-
-    expect(remoteCommandServiceSpy).toHaveBeenCalledWith(
-      SharedConstants.Commands.UI.SwitchDebugMode,
-      DebugMode.Sidecar
-    );
-    await new Promise(resolve => setTimeout(resolve, 50));
-    expect(remoteCommandServiceSpy).toHaveBeenCalledWith(
-      SharedConstants.Commands.Settings.ReceiveGlobalSettings,
-      jasmine.any(Object)
-    );
   });
 });

@@ -33,7 +33,8 @@
 
 import { join } from 'path';
 
-import { DebugMode, SharedConstants } from '@bfemulator/app-shared';
+import { SharedConstants } from '@bfemulator/app-shared';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { AppMenuBuilder } from './appMenuBuilder';
 
@@ -56,8 +57,32 @@ const mockMenuClassAppend = jest.fn(() => null);
 jest.mock('electron', () => ({
   app: {
     getName: () => 'bot-framework-emulator',
+    setName: () => void 0,
     getVersion: () => '4.2.0',
+    on: () => void 0,
   },
+  ipcMain: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+  ipcRenderer: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
   Menu: class {
     append = mockMenuClassAppend;
     items: any[] = [];
@@ -103,17 +128,7 @@ jest.mock('./appUpdater', () => ({
   },
 }));
 
-let mockRemoteCall = () => null;
 jest.mock('./emulator', () => ({}));
-jest.mock('./main', () => ({
-  mainWindow: {
-    commandService: {
-      get remoteCall() {
-        return mockRemoteCall;
-      },
-    },
-  },
-}));
 
 describe('AppMenuBuilder', () => {
   const mockSendActivityMenu = {
@@ -146,7 +161,12 @@ describe('AppMenuBuilder', () => {
   };
   let mockGetMenuItemById;
   let processPlatformBackup;
-
+  let commandService: CommandServiceImpl;
+  beforeAll(() => {
+    const decorator = CommandServiceInstance();
+    const descriptor = decorator({ descriptor: {} }, 'none') as any;
+    commandService = descriptor.descriptor.get();
+  });
   beforeEach(() => {
     processPlatformBackup = process.platform;
     mockAppendedBots = [];
@@ -238,7 +258,7 @@ describe('AppMenuBuilder', () => {
   });
 
   it('should update the recent bots list', () => {
-    mockRemoteCall = jest.fn(() => Promise.resolve(null));
+    const mockRemoteCall = jest.spyOn(commandService, 'remoteCall').mockResolvedValueOnce(true);
     const mockBotPath = join('path', 'to', 'bot');
     const mockRecentBots = [
       { displayName: 'bot1', path: mockBotPath },
@@ -311,46 +331,50 @@ describe('AppMenuBuilder', () => {
         },
       },
     };
-    mockRemoteCall = jest.fn(commandName => {
+    const mockRemoteCall = jest.fn(commandName => {
       if (commandName === SharedConstants.Commands.Misc.GetStoreState) {
         return Promise.resolve(mockState);
       } else {
         return Promise.resolve({});
       }
     });
+    jest.spyOn(commandService, 'remoteCall').mockImplementation(mockRemoteCall);
     Object.defineProperty(process, 'platform', { value: 'win32' });
     await AppMenuBuilder.initAppMenu();
 
     // verify that each section of the menu is the expected length
-    expect(appMenuTemplate).toHaveLength(5); // file, edit, view, convo, help
+    expect(appMenuTemplate).toHaveLength(6); // file, debug, edit, view, convo, help
 
     const fileMenuTemplate = appMenuTemplate[0].submenu;
-    expect(fileMenuTemplate).toHaveLength(16);
+    expect(fileMenuTemplate).toHaveLength(17);
 
     // should show the currently signed in user
     const azureSignInItem = fileMenuTemplate[9];
     expect(azureSignInItem.label).toBe('Sign out (TheAmazingAuthLad@hotmail.com)');
 
     // should list all available themes and selected theme (midnight) as checked
-    const themeMenu = fileMenuTemplate[11];
+    const themeMenu = fileMenuTemplate[12];
     expect(themeMenu.label).toBe('Themes');
     expect(themeMenu.submenu).toHaveLength(3); // light, dark, midnight
     expect(themeMenu.submenu[2].type).toBe('checkbox');
     expect(themeMenu.submenu[2].label).toBe('midnight');
     expect(themeMenu.submenu[2].checked).toBe(true);
 
-    const editMenuTemplate = appMenuTemplate[1].submenu;
+    const debugMenuTemplate = appMenuTemplate[1].submenu;
+    expect(debugMenuTemplate).toHaveLength(1);
+
+    const editMenuTemplate = appMenuTemplate[2].submenu;
     expect(editMenuTemplate).toHaveLength(7);
 
-    const viewMenuTemplate = appMenuTemplate[2].submenu;
-    expect(viewMenuTemplate).toHaveLength(7);
+    const viewMenuTemplate = appMenuTemplate[3].submenu;
+    expect(viewMenuTemplate).toHaveLength(6);
 
-    const convoMenuTemplate = appMenuTemplate[3].submenu;
+    const convoMenuTemplate = appMenuTemplate[4].submenu;
     expect(convoMenuTemplate).toHaveLength(1);
     const sendActivityMenu = convoMenuTemplate[0].submenu;
     expect(sendActivityMenu).toHaveLength(7);
 
-    const helpMenuTemplate = appMenuTemplate[4].submenu;
+    const helpMenuTemplate = appMenuTemplate[5].submenu;
     expect(helpMenuTemplate).toHaveLength(14);
 
     expect(mockSetApplicationMenu).toHaveBeenCalledWith('I am a menu');
@@ -386,18 +410,19 @@ describe('AppMenuBuilder', () => {
         },
       },
     };
-    mockRemoteCall = jest.fn(commandName => {
+    const mockRemoteCall = jest.fn(commandName => {
       if (commandName === SharedConstants.Commands.Misc.GetStoreState) {
         return Promise.resolve(mockState);
       } else {
         return Promise.resolve({});
       }
     });
+    jest.spyOn(commandService, 'remoteCall').mockImplementation(mockRemoteCall);
     Object.defineProperty(process, 'platform', { value: 'darwin' });
     await AppMenuBuilder.initAppMenu();
 
     // verify that each section of the menu is the expected length
-    expect(appMenuTemplate).toHaveLength(7); // app, file, edit, view, window, convo, help
+    expect(appMenuTemplate).toHaveLength(8); // app, debug, file, edit, view, window, convo, help
 
     const macAppMenuTemplate = appMenuTemplate[0].submenu;
     expect(macAppMenuTemplate).toHaveLength(9);
@@ -407,31 +432,7 @@ describe('AppMenuBuilder', () => {
 
     // should set the theme menu type to radio
     const fileMenuTemplate = appMenuTemplate[1].submenu;
-    const themeMenu = fileMenuTemplate[11];
+    const themeMenu = fileMenuTemplate[12];
     expect(themeMenu.submenu[0].type).toBe('radio');
-  });
-
-  it('should initialize and update the debugMenu item', async () => {
-    const viewMenu = await AppMenuBuilder.initViewMenu();
-    expect(viewMenu.submenu[6]).toEqual({
-      checked: false,
-      click: jasmine.any(Function),
-      id: 'debugMode',
-      label: 'Bot Inspector Mode',
-      type: 'checkbox',
-    });
-
-    mockGetApplicationMenu = () => ({
-      getMenuItemById: () => viewMenu.submenu[6],
-    });
-
-    AppMenuBuilder.updateDebugModeViewMenuItem(DebugMode.Sidecar);
-    expect(viewMenu.submenu[6]).toEqual({
-      checked: true,
-      click: jasmine.any(Function),
-      id: 'debugMode',
-      label: 'Bot Inspector Mode',
-      type: 'checkbox',
-    });
   });
 });

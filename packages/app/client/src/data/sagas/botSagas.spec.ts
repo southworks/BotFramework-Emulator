@@ -31,9 +31,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { newNotification, SharedConstants, DebugMode } from '@bfemulator/app-shared';
+import { newNotification, SharedConstants } from '@bfemulator/app-shared';
 import { BotConfigWithPath, ConversationService } from '@bfemulator/sdk-shared';
-import { call, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
+import { call, put, takeEvery, takeLatest } from 'redux-saga/effects';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { ActiveBotHelper } from '../../ui/helpers/activeBotHelper';
 import {
@@ -45,12 +46,9 @@ import {
 } from '../action/botActions';
 import { beginAdd } from '../action/notificationActions';
 import { generateHash } from '../botHelpers';
-import { CommandServiceImpl } from '../../platform/commands/commandServiceImpl';
 
-import { botSagas, browseForBot, generateHashForActiveBot, openBotViaFilePath, openBotViaUrl } from './botSagas';
-import { refreshConversationMenu } from './sharedSagas';
-
-jest.mock('../../ui/dialogs', () => ({}));
+import { botSagas, BotSagas } from './botSagas';
+import { SharedSagas } from './sharedSagas';
 
 jest.mock('../store', () => ({
   get store() {
@@ -58,47 +56,79 @@ jest.mock('../store', () => ({
   },
 }));
 
+jest.mock('electron', () => ({
+  ipcMain: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+  ipcRenderer: new Proxy(
+    {},
+    {
+      get(): any {
+        return () => ({});
+      },
+      has() {
+        return true;
+      },
+    }
+  ),
+}));
+
 const mockSharedConstants = SharedConstants;
 let mockRemoteCommandsCalled = [];
 let mockLocalCommandsCalled = [];
 
-jest.mock('../../platform/commands/commandServiceImpl', () => ({
-  CommandServiceImpl: {
-    call: async (commandName: string, ...args: any[]) => {
+describe('The botSagas', () => {
+  let commandService: CommandServiceImpl;
+  beforeAll(() => {
+    const decorator = CommandServiceInstance();
+    const descriptor = decorator({ descriptor: {} }, 'none') as any;
+    commandService = descriptor.descriptor.get();
+
+    commandService.call = async (commandName: string, ...args: any[]) => {
       mockLocalCommandsCalled.push({ commandName, args: args });
 
       switch (commandName) {
         case mockSharedConstants.Commands.Bot.OpenBrowse:
           return Promise.resolve(true);
         default:
-          return Promise.resolve(true);
+          return Promise.resolve(true) as any;
       }
-    },
-    remoteCall: async (commandName: string, ...args: any[]) => {
+    };
+    commandService.remoteCall = async (commandName: string, ...args: any[]) => {
       mockRemoteCommandsCalled.push({ commandName, args: args });
 
-      return Promise.resolve(true);
-    },
-  },
-}));
+      return Promise.resolve(true) as any;
+    };
+  });
 
-describe('The botSagas', () => {
   beforeEach(() => {
     mockRemoteCommandsCalled = [];
     mockLocalCommandsCalled = [];
+    ConversationService.startConversation = jest.fn().mockResolvedValue(true);
   });
 
   it('should initialize the root saga', () => {
     const gen = botSagas();
 
-    expect(gen.next().value).toEqual(takeEvery(BotActionType.browse, browseForBot));
+    expect(gen.next().value).toEqual(takeEvery(BotActionType.browse, BotSagas.browseForBot));
 
-    expect(gen.next().value).toEqual(takeEvery(BotActionType.openViaUrl, openBotViaUrl));
-    expect(gen.next().value).toEqual(takeEvery(BotActionType.openViaFilePath, openBotViaFilePath));
-    expect(gen.next().value).toEqual(takeEvery(BotActionType.setActive, generateHashForActiveBot));
+    expect(gen.next().value).toEqual(takeEvery(BotActionType.openViaUrl, BotSagas.openBotViaUrl));
+    expect(gen.next().value).toEqual(takeEvery(BotActionType.openViaFilePath, BotSagas.openBotViaFilePath));
+    expect(gen.next().value).toEqual(takeEvery(BotActionType.setActive, BotSagas.generateHashForActiveBot));
 
     expect(gen.next().value).toEqual(
-      takeLatest([BotActionType.setActive, BotActionType.load, BotActionType.close], refreshConversationMenu)
+      takeLatest(
+        [BotActionType.setActive, BotActionType.load, BotActionType.close],
+        SharedSagas.refreshConversationMenu
+      )
     );
 
     expect(gen.next().done).toBe(true);
@@ -120,7 +150,7 @@ describe('The botSagas', () => {
         bot: botConfigPath,
       },
     };
-    const gen = generateHashForActiveBot(setActiveBotAction);
+    const gen = BotSagas.generateHashForActiveBot(setActiveBotAction);
     const generatedHash = gen.next().value;
 
     expect(generatedHash).toEqual(call(generateHash, botConfigPath));
@@ -131,43 +161,13 @@ describe('The botSagas', () => {
   });
 
   it('should open native open file dialog to browse for .bot file', () => {
-    const gen = browseForBot();
+    const gen = BotSagas.browseForBot();
     expect(gen.next().value).toEqual(call([ActiveBotHelper, ActiveBotHelper.confirmAndOpenBotFromFile]));
     expect(gen.next().done).toBe(true);
   });
 
   it('should open a bot from a url', () => {
-    const mockState = {
-      clientAwareSettings: {
-        serverUrl: 'http://localhost:3000',
-        users: {
-          currentUserId: '1',
-          usersById: { '1': {} },
-        },
-      },
-    };
-    const gen = openBotViaUrl(
-      openBotViaUrlAction({
-        appPassword: 'password',
-        appId: '1234abcd',
-        endpoint: 'http://localhost/api/messages',
-      })
-    );
-    const io = select(() => void 0);
-    io.SELECT.selector = jasmine.any(Function) as any;
-    // select serverUrl
-    const selectServerUrl = gen.next().value as any;
-    expect(selectServerUrl).toEqual(io);
-    // select user
-    const selectUser = gen.next(selectServerUrl.SELECT.selector(mockState)).value as any;
-    expect(selectUser).toEqual(io);
-    // call ConversationService.startConversation
-    jest.spyOn(ConversationService, 'startConversation').mockResolvedValue({ ok: true });
-    expect(gen.next(selectUser.SELECT.selector(mockState)).value).not.toBeNull();
-  });
-
-  it('should send a notification if opening a bot from a URL fails', () => {
-    const gen = openBotViaUrl(
+    const gen = BotSagas.openBotViaUrl(
       openBotViaUrlAction({
         appPassword: 'password',
         appId: '1234abcd',
@@ -177,11 +177,78 @@ describe('The botSagas', () => {
     gen.next();
     // select serverUrl
     gen.next('www.serverurl.com');
+    // select custom user id
+    gen.next('');
     // select users
     const users = { currentUserId: 'user1', usersById: { user1: {} } };
     gen.next(users);
-    // call ConversationService.startConversation
-    gen.next({ ok: false, statusText: 'oh noes!' });
+    // startConversation
+    const callToSaveUrl = gen.next({ ok: true, json: async () => null });
+    expect(callToSaveUrl.value).toEqual(
+      call(
+        [commandService, commandService.remoteCall],
+        SharedConstants.Commands.Settings.SaveBotUrl,
+        'http://localhost/api/messages'
+      )
+    );
+    // the saga should be finished
+    expect(gen.next().done).toBe(true);
+  });
+
+  it('should open a bot from a url with the custom user id', () => {
+    const gen = BotSagas.openBotViaUrl(
+      openBotViaUrlAction({
+        appPassword: 'password',
+        appId: '1234abcd',
+        endpoint: 'http://localhost/api/messages',
+      })
+    );
+    gen.next();
+    // select serverUrl
+    gen.next('www.serverurl.com');
+    // select custom user id
+    gen.next('customUserId');
+    // select users
+    const users = { currentUserId: 'user1', usersById: { user1: {} } };
+    const callToSetCurrentUser = gen.next(users).value;
+    expect(callToSetCurrentUser).toEqual(
+      call(
+        [commandService, commandService.remoteCall],
+        SharedConstants.Commands.Emulator.SetCurrentUser,
+        'customUserId'
+      )
+    );
+    // call to set current user
+    gen.next();
+    // startConversation
+    const callToSaveUrl = gen.next({ ok: true, json: async () => null });
+    expect(callToSaveUrl.value).toEqual(
+      call(
+        [commandService, commandService.remoteCall],
+        SharedConstants.Commands.Settings.SaveBotUrl,
+        'http://localhost/api/messages'
+      )
+    );
+    // the saga should be finished
+    expect(gen.next().done).toBe(true);
+  });
+
+  it('should send a notification if opening a bot from a URL fails', () => {
+    const gen = BotSagas.openBotViaUrl(
+      openBotViaUrlAction({
+        appPassword: 'password',
+        appId: '1234abcd',
+        endpoint: 'http://localhost/api/messages',
+      })
+    );
+    gen.next();
+    // select serverUrl
+    gen.next('www.serverurl.com');
+    // select custom user id
+    gen.next('');
+    // select users
+    const users = { currentUserId: 'user1', usersById: { user1: {} } };
+    gen.next(users);
     const errorNotification = beginAdd(
       newNotification('An Error occurred opening the bot at http://localhost/api/messages: oh noes!')
     );
@@ -196,23 +263,24 @@ describe('The botSagas', () => {
   });
 
   it('should send the "/INSPECT open" command when in debug mode and opening from url', () => {
-    const gen = openBotViaUrl(
+    const gen = BotSagas.openBotViaUrl(
       openBotViaUrlAction({
         appPassword: 'password',
         appId: '1234abcd',
         endpoint: 'http://localhost/api/messages',
+        mode: 'debug',
       })
     );
     gen.next();
     // select serverUrl
     gen.next('www.serverurl.com');
+    // select custom user id
+    gen.next('');
     // select users
     const users = { currentUserId: 'user1', usersById: { user1: {} } };
     gen.next(users);
     // startConversation
     gen.next({ ok: true, json: async () => null });
-    // select debug mode
-    gen.next(DebugMode.Sidecar);
     // response.json from starting conversation
     const callToPostActivity = gen.next({ id: 'someConversationId' }).value;
     // posting activity to conversation
@@ -222,7 +290,7 @@ describe('The botSagas', () => {
     };
     expect(callToPostActivity).toEqual(
       call(
-        [CommandServiceImpl, CommandServiceImpl.remoteCall],
+        [commandService, commandService.remoteCall],
         SharedConstants.Commands.Emulator.PostActivityToConversation,
         'someConversationId',
         activity
@@ -232,7 +300,7 @@ describe('The botSagas', () => {
     const callToRememberEndpoint = gen.next({ statusCode: 200 });
     expect(callToRememberEndpoint.value).toEqual(
       call(
-        [CommandServiceImpl, CommandServiceImpl.remoteCall],
+        [commandService, commandService.remoteCall],
         SharedConstants.Commands.Settings.SaveBotUrl,
         'http://localhost/api/messages'
       )
@@ -242,23 +310,24 @@ describe('The botSagas', () => {
   });
 
   it('should spawn a notification if posting the "/INSPECT open" command fails', () => {
-    const gen = openBotViaUrl(
+    const gen = BotSagas.openBotViaUrl(
       openBotViaUrlAction({
         appPassword: 'password',
         appId: '1234abcd',
         endpoint: 'http://localhost/api/messages',
+        mode: 'debug',
       })
     );
     gen.next();
     // select serverUrl
     gen.next('www.serverurl.com');
+    // select custom user id
+    gen.next('');
     // select users
     const users = { currentUserId: 'user1', usersById: { user1: {} } };
     gen.next(users);
     // startConversation
     gen.next({ ok: true, json: async () => null });
-    // select debug mode
-    gen.next(DebugMode.Sidecar);
     // response.json from starting conversation
     gen.next({ id: 'someConversationId' });
     // POSTing to the conversation should return a 400
@@ -271,28 +340,29 @@ describe('The botSagas', () => {
   });
 
   it('should spawn a notification if parsing the conversation id from the response fails', () => {
-    const gen = openBotViaUrl(
+    const gen = BotSagas.openBotViaUrl(
       openBotViaUrlAction({
         appPassword: 'password',
         appId: '1234abcd',
         endpoint: 'http://localhost/api/messages',
+        mode: 'debug',
       })
     );
     gen.next();
     // select serverUrl
     gen.next('www.serverurl.com');
+    // select custom user id
+    gen.next('');
     // select users
     const users = { currentUserId: 'user1', usersById: { user1: {} } };
     gen.next(users);
     // startConversation
     gen.next({ ok: true, json: async () => null });
-    // select debug mode
-    gen.next(DebugMode.Sidecar);
     // response.json from starting conversation
     const startConversationResponse = gen.next({ id: undefined }).value;
     // POSTing to the conversation should return a 400
     const errorNotification = beginAdd(
-      newNotification('An error occurred while trying to grab conversation ID from new conversation.')
+      newNotification('An error occurred while trying to grab conversation ID from the new conversation.')
     );
     (errorNotification as any).payload.notification.timestamp = jasmine.any(Number);
     (errorNotification as any).payload.notification.id = jasmine.any(String);
@@ -300,7 +370,7 @@ describe('The botSagas', () => {
   });
 
   it('should open a bot from a file path', () => {
-    const gen = openBotViaFilePath(openBotViaFilePathAction('/some/path.bot'));
+    const gen = BotSagas.openBotViaFilePath(openBotViaFilePathAction('/some/path.bot'));
 
     jest.spyOn(ActiveBotHelper, 'confirmAndOpenBotFromFile').mockResolvedValue(true);
     expect(gen.next().value).toEqual(
@@ -309,7 +379,7 @@ describe('The botSagas', () => {
   });
 
   it('should send a notification when opening a bot from a file path fails', () => {
-    const gen = openBotViaFilePath(openBotViaFilePathAction('/some/path.bot'));
+    const gen = BotSagas.openBotViaFilePath(openBotViaFilePathAction('/some/path.bot'));
     const callOpenBot = gen.next().value;
     expect(callOpenBot).toEqual(call([ActiveBotHelper, ActiveBotHelper.confirmAndOpenBotFromFile], '/some/path.bot'));
     const putNotification = gen.throw(new Error('oh noes!'));

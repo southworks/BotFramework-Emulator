@@ -30,43 +30,4 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
-import {
-  CommandHandler,
-  CommandService,
-  CommandServiceImpl as InternalSharedService,
-  Disposable,
-  DisposableImpl,
-} from '@bfemulator/sdk-shared';
-
-import { CommandRegistry } from '../../commands';
-import { ElectronIPC } from '../../ipc';
-
-class CServiceImpl extends DisposableImpl implements CommandService {
-  private readonly _service: InternalSharedService;
-
-  public get registry() {
-    return this._service.registry;
-  }
-
-  constructor() {
-    super();
-    this._service = new InternalSharedService(ElectronIPC, 'command-service', CommandRegistry);
-    super.toDispose(this._service);
-  }
-
-  public call(commandName: string, ...args: any[]): Promise<any> {
-    return this._service.call(commandName, ...args);
-  }
-
-  public remoteCall(commandName: string, ...args: any[]): Promise<any> {
-    return this._service.remoteCall(commandName, ...args);
-  }
-
-  public on(event: string, handler?: CommandHandler): Disposable;
-  public on(event: 'command-not-found', handler?: (commandName: string, ...args: any[]) => any) {
-    return this._service.on(event, handler);
-  }
-}
-
-export const CommandServiceImpl = new CServiceImpl();
+export type EmulatorMode = 'livechat' | 'livechat-url' | 'transcript' | 'debug';

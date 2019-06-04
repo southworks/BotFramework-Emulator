@@ -77,7 +77,6 @@ export const SharedConstants = {
       ShowOpenDialog: 'shell:showExplorer-open-dialog',
       ShowSaveDialog: 'shell:showExplorer-save-dialog',
       UpdateFileMenu: 'menu:update-file-menu',
-      UpdateDebugModeMenuItem: 'menu:update-debug-mode-menu-item',
       UpdateConversationMenu: 'menu:update-conversation-menu',
       SetFullscreen: 'electron:set-fullscreen',
       SetTitleBar: 'electron:set-title-bar',
@@ -109,6 +108,7 @@ export const SharedConstants = {
       PostActivityToConversation: 'emulator:post-activity',
       StartEmulator: 'emulator:start',
       OpenProtocolUrls: 'emulator:openProtocolUrls',
+      ClearState: 'emulator:clear-state',
     },
 
     Extension: {
@@ -168,7 +168,6 @@ export const SharedConstants = {
       ShowSecretPromptDialog: 'secret-prompt:showExplorer',
       SwitchNavBarTab: 'navbar:switch-tab',
       ShowAppSettings: 'shell:showExplorer-app-settings',
-      SwitchDebugMode: 'shell:switchDebugMode',
       SwitchTheme: 'shell:switchTheme',
       SignInToAzure: 'shell:signInToAzure',
       ArmTokenReceivedOnStartup: 'shell:armTokenReceivedOnStartup',

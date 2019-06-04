@@ -31,16 +31,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { DebugMode, SharedConstants } from '@bfemulator/app-shared';
+import { SharedConstants } from '@bfemulator/app-shared';
 import { BotEmulator, Conversation, ConversationSet } from '@bfemulator/emulator-core';
 import { LogLevel, networkRequestItem, networkResponseItem, textItem } from '@bfemulator/sdk-shared';
 import { IEndpointService } from 'botframework-config';
 import { createServer, Request, Response, Route, Server } from 'restify';
 import CORS from 'restify-cors-middleware';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
 
 import { Emulator } from './emulator';
-import { mainWindow } from './main';
-import { getStore } from './settingsData/store';
+import { emulatorApplication } from './main';
 
 interface ConversationAwareRequest extends Request {
   conversation?: { conversationId?: string };
@@ -48,6 +48,8 @@ interface ConversationAwareRequest extends Request {
 }
 
 export class RestServer {
+  @CommandServiceInstance()
+  private commandService: CommandServiceImpl;
   private readonly router: Server;
 
   // Late binding
@@ -56,7 +58,7 @@ export class RestServer {
     if (!this._botEmulator) {
       this._botEmulator = new BotEmulator(botUrl => Emulator.getInstance().ngrok.getServiceUrl(botUrl), {
         fetch,
-        loggerOrLogService: mainWindow.logService,
+        loggerOrLogService: emulatorApplication.mainWindow.logService,
       });
       this._botEmulator.facilities.conversations.on('new', this.onNewConversation);
     }
@@ -122,7 +124,7 @@ export class RestServer {
       level = LogLevel.Error;
     }
 
-    mainWindow.logService.logToChat(
+    emulatorApplication.mainWindow.logService.logToChat(
       conversationId,
       networkRequestItem(facility, (req as any)._body, req.headers, req.method, req.url),
       networkResponseItem((res as any)._data, res.headers, res.statusCode, res.statusMessage, req.url),
@@ -142,14 +144,8 @@ export class RestServer {
       botEndpoint: { id, botUrl },
       mode,
     } = conversation;
-    // Set the debugMode which affects what is
-    // visible to chat and the log panel.
-    const {
-      windowState: { debugMode },
-    } = getStore().getState();
-    conversation.debugMode = debugMode;
 
-    await mainWindow.commandService.remoteCall(
+    await this.commandService.remoteCall(
       SharedConstants.Commands.Emulator.NewLiveChat,
       {
         id,
@@ -172,7 +168,7 @@ function shouldPostToChat(
   const isDLine = method === 'GET' && route.spec.path === '/v3/directline/conversations/:conversationId/activities';
   const isNotTranscript = !!conversationId && !conversationId.includes('transcript');
   const { conversation } = req;
-  return !isDLine && isNotTranscript && conversation.debugMode !== DebugMode.Sidecar;
+  return !isDLine && isNotTranscript && conversation.mode !== 'debug';
 }
 
 function getConversationId(req: ConversationAwareRequest): string {

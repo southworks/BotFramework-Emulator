@@ -30,6 +30,35 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+import { ForkEffect, put, takeEvery } from 'redux-saga/effects';
+import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
+import { newNotification } from '@bfemulator/app-shared';
 
-export * from './process';
-export * from './websocket';
+import { CommandAction, CommandActionPayload, EXECUTE_COMMAND } from '../action/commandAction';
+import { beginAdd } from '../action/notificationActions';
+
+export class CommandSagas {
+  @CommandServiceInstance()
+  private static commandService: CommandServiceImpl;
+
+  public static *executeCommand(action: CommandAction<CommandActionPayload>): IterableIterator<any> {
+    const { isRemote, commandName, args, resolver } = action.payload;
+    try {
+      const result = isRemote
+        ? yield CommandSagas.commandService.remoteCall(commandName, ...args)
+        : yield CommandSagas.commandService.call(commandName, ...args);
+      if (resolver) {
+        resolver(result);
+      }
+    } catch (e) {
+      const type = isRemote ? 'remote' : 'local';
+      yield put(
+        beginAdd(newNotification(`An error occurred while executing the ${type} command: ${commandName}\n ${e}`))
+      );
+    }
+  }
+}
+
+export function* commandSagas(): IterableIterator<ForkEffect> {
+  yield takeEvery(EXECUTE_COMMAND, CommandSagas.executeCommand);
+}

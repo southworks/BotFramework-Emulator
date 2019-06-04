@@ -34,7 +34,7 @@
 import { ConversationParameters, ChannelAccount, ConversationAccount } from 'botframework-schema';
 import * as HttpStatus from 'http-status-codes';
 import * as Restify from 'restify';
-import { ChatMode } from '@bfemulator/app-shared';
+import { EmulatorMode } from '@bfemulator/sdk-shared';
 
 import { BotEmulator } from '../../botEmulator';
 import BotEndpoint from '../../facility/botEndpoint';
@@ -68,7 +68,7 @@ export default function createConversation(botEmulator: BotEmulator) {
 }
 
 function getConversation(
-  params: { conversationId: string; members: any[]; mode: ChatMode },
+  params: { conversationId: string; members: any[]; mode: EmulatorMode },
   emulator: BotEmulator,
   endpoint: BotEndpoint
 ): Conversation {
@@ -81,7 +81,8 @@ function getConversation(
   if (!conversation) {
     const { members = [] } = params;
     const [member] = members;
-    const { id = uniqueId(), name = 'User' } = member || {};
+    const currentUserId = emulator.facilities.users.currentUserId;
+    const { id = currentUserId || uniqueId(), name = 'User' } = member || {};
     conversation = emulator.facilities.conversations.newConversation(
       emulator,
       endpoint,

@@ -31,29 +31,4 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Channel, Disposable, IPC } from '@bfemulator/sdk-shared';
-const { ipcRenderer } = (window as any).require('electron');
-
-class ElectronIPCImpl extends IPC {
-  constructor() {
-    super();
-
-    ipcRenderer.on('ipc:message', (_sender: any, ...args: any[]) => {
-      const channelName = args.shift();
-      const channel = this._channels[channelName];
-      if (channel) {
-        channel.onMessage(...args);
-      }
-    });
-  }
-
-  public send(...args: any[]): void {
-    ipcRenderer.send('ipc:message', ...args);
-  }
-
-  public registerChannel(channel: Channel): Disposable {
-    return super.registerChannel(channel);
-  }
-}
-
-export const ElectronIPC = new ElectronIPCImpl();
+module.exports = {};
