@@ -157,6 +157,9 @@ export class Chat extends Component<ChatProps, ChatState> {
       case 'playVideo':
       case 'showImage':
       case 'openUrl':
+        if (!value) {
+          break;
+        }
         this.props.showOpenUrlDialog(value).then(result => {
           if (result == 1) {
             window.open(value, '_blank');
