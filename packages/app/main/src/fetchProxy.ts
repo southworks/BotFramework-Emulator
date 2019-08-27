@@ -45,7 +45,9 @@ declare function fetch(input: RequestInfo, init?: RequestInit): Promise<Response
     // eslint-disable-next-line typescript/no-var-requires
     const https = require('https');
     const httpsAgent = new https.Agent({ rejectUnauthorized: false });
+
     requestInit.agent = httpsAgent;
+
     return nodeFetch(urlOrRequest, requestInit);
   }
 
