@@ -10,7 +10,7 @@
 // Copyright (c) Microsoft Corporation
 // All rights reserved.
 //
-// MIT License:
+// MIT License:fa
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
 // "Software"), to deal in the Software without restriction, including
@@ -83,6 +83,9 @@ export class CollapsibleJsonViewer extends Component<CollapsibleJsonViewerProps,
           }
           if (node.parentElement.getAttribute('aria-expanded') === 'false') {
             node.parentElement.setAttribute('aria-expanded', 'true');
+          }
+          if (node.parentElement.getAttribute('role') === 'tree') {
+            node.setAttribute('aria-expanded', 'true');
           }
           break;
 
