@@ -392,9 +392,12 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
   private onSaveClick = (): void => {
     if (this.state.connectedServiceCopy.type === 'qna') {
       const validHostname = new RegExp('http(s?)://*');
+
       if (!validHostname.test(this.state.connectedServiceCopy['hostname'])) {
         const updatedConnectedServiceCopy = this.state.connectedServiceCopy;
-        updatedConnectedServiceCopy['hostname'] = 'http://' + this.state.connectedServiceCopy['hostname'];
+        const linkProtocol = 'http://';
+
+        updatedConnectedServiceCopy['hostname'] = linkProtocol + this.state.connectedServiceCopy['hostname'];
         this.setState({ connectedServiceCopy: updatedConnectedServiceCopy });
       }
     }
