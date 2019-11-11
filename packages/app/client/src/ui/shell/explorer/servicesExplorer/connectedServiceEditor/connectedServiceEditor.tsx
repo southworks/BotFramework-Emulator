@@ -228,24 +228,20 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
 
   private get luisAndDispatchHeader(): ReactNode {
     const { serviceType } = this.props;
-    const textString = 'Learn more about keys in ' + labelMap[serviceType].toString();
     return (
       <p>
         {`You can find your LUIS app ID and subscription key in ${portalMap[serviceType]}. `}
-        <LinkButton className={styles.link} linkRole={true} onClick={this.learnMoreLinkButton}>
-          {textString}
-        </LinkButton>
+        {this.learnMoreLinkButton()}
       </p>
     );
   }
 
   private get qnaHeader(): ReactNode {
     const { serviceType } = this.props;
-
     return (
       <p>
         {`You can find your knowledge base ID and subscription key in ${portalMap[serviceType]}. `}
-        {this.learnMoreLinkButton}
+        {this.learnMoreLinkButton()}
       </p>
     );
   }
@@ -258,7 +254,7 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
           Azure Portal.
         </LinkButton>
         <br />
-        {this.learnMoreLinkButton}
+        {this.learnMoreLinkButton()}
       </p>
     );
   }
@@ -271,7 +267,7 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
           Azure Portal.
         </LinkButton>
         <br />
-        {this.learnMoreLinkButton}
+        {this.learnMoreLinkButton()}
       </p>
     );
   }
