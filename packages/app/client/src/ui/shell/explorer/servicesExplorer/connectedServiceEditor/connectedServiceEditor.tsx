@@ -100,14 +100,16 @@ const portalMap = {
 export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProps, ConnectedServiceEditorState> {
   constructor(props: ConnectedServiceEditorProps, state: ConnectedServiceEditorState) {
     super(props, state);
-    this.state = {
-      connectedServiceCopy: BotConfigurationBase.serviceFromJSON(
-        props.connectedService || {
-          type: props.serviceType,
-          name: '',
-        }
-      ),
-    };
+    if (props.serviceType === 'qna' && props.connectedService === undefined) {
+      this.state = { connectedServiceCopy: new ConnectedService() };
+      this.state.connectedServiceCopy.type = ServiceTypes.QnA;
+    } else {
+      this.state = {
+        connectedServiceCopy: BotConfigurationBase.serviceFromJSON(
+          props.connectedService || { type: props.serviceType, name: '' }
+        ),
+      };
+    }
   }
 
   public render(): JSX.Element {
@@ -388,6 +390,14 @@ export class ConnectedServiceEditor extends Component<ConnectedServiceEditorProp
   private onAzurePortalClick = this.createAnchorClickHandler('https://portal.azure.com');
 
   private onSaveClick = (): void => {
+    if (this.state.connectedServiceCopy.type === 'qna') {
+      const validHostname = new RegExp('http(s?)://*');
+      if (!validHostname.test(this.state.connectedServiceCopy['hostname'])) {
+        const updatedConnectedServiceCopy = this.state.connectedServiceCopy;
+        updatedConnectedServiceCopy['hostname'] = 'http://' + this.state.connectedServiceCopy['hostname'];
+        this.setState({ connectedServiceCopy: updatedConnectedServiceCopy });
+      }
+    }
     this.props.updateConnectedService(this.state.connectedServiceCopy);
   };
 
