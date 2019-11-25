@@ -68,7 +68,6 @@ class EventHandlers {
     const ctrlOrCmdPressed = event.ctrlKey || event.metaKey;
     const shiftPressed = event.shiftKey;
     const key = event.key.toLowerCase();
-    const keyCode = event.keyCode;
     const {
       Commands: {
         Electron: { ToggleDevTools },
