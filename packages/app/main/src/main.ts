@@ -69,6 +69,7 @@ import { sendNotificationToClient } from './utils/sendNotificationToClient';
 import { WindowManager } from './windowManager';
 import { ProtocolHandler } from './protocolHandler';
 import { WebSocketServer } from './server/webSocketServer';
+import installExtension, { REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS } from 'electron-devtools-installer';
 
 const genericTunnelError =
   'Oops.. Your ngrok tunnel seems to have an error. Please check the Ngrok Status Viewer for more details';
@@ -321,6 +322,13 @@ class EmulatorApplication {
     if (process.env.NODE_ENV !== 'test') {
       SplashScreen.show(this.mainBrowserWindow);
     }
+
+    installExtension([REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS])
+      /* eslint-disable no-console */
+      .then(installed => console.log('Successfully installed DevTools'))
+      .catch(err => console.error('Failed to install dev tools: ', err));
+    /* eslint-enable no-console */
+
     const page =
       process.env.ELECTRON_TARGET_URL ||
       url.format({
