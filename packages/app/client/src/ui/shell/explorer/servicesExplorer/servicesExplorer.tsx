@@ -188,7 +188,6 @@ export class ServicesExplorer extends ServicePane<ServicesExplorerProps> {
           onKeyPress={this.onKeyPress}
           data-index={index}
           tabIndex={0}
-          title={service.name}
         >
           {iconMap[service.type]}
           {label}{' '}

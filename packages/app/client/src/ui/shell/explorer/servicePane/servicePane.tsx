@@ -111,9 +111,13 @@ export abstract class ServicePane<
     if (!links || !links.length) {
       return <ExpandCollapseContent>{this.emptyContent}</ExpandCollapseContent>;
     }
+    debugger;
+    if (this.props.sortCriteria && this.listRef) {
+      this.listRef.focus();
+    }
     return (
       <ExpandCollapseContent>
-        <ul className={styles.servicePaneList} ref={ul => (this.listRef = ul)}>
+        <ul className={styles.servicePaneList} ref={ul => (this.listRef = ul)} tabindex={0}>
           {links}
         </ul>
         {additionalContent}
