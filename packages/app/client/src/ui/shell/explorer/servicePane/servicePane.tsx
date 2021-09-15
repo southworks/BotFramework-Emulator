@@ -117,7 +117,7 @@ export abstract class ServicePane<
     }
     return (
       <ExpandCollapseContent>
-        <ul className={styles.servicePaneList} ref={ul => (this.listRef = ul)} tabindex={0}>
+        <ul className={styles.servicePaneList} ref={ul => (this.listRef = ul)} tabIndex={0}>
           {links}
         </ul>
         {additionalContent}
