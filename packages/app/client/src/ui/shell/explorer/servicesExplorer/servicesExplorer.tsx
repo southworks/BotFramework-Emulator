@@ -120,6 +120,10 @@ export class ServicesExplorer extends ServicePane<ServicesExplorerProps> {
       }
       return 0;
     });
+
+    // Check if the sortCriteria has changed
+    state.sortCriteriaChanged = existingProps.sortCriteria != newProps.sortCriteria;
+
     return state;
   }
 

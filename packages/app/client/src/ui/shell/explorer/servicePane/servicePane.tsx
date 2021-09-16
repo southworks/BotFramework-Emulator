@@ -49,6 +49,7 @@ export interface ServicePaneProps extends ServicePaneState {
 
 export interface ServicePaneState {
   expanded?: boolean;
+  sortCriteriaChanged?: boolean;
 }
 
 /* eslint-disable react/display-name */
@@ -108,12 +109,13 @@ export abstract class ServicePane<
 
   protected get content(): JSX.Element {
     const { links, additionalContent } = this;
+    const { sortCriteriaChanged } = this.state;
+
     if (!links || !links.length) {
       return <ExpandCollapseContent>{this.emptyContent}</ExpandCollapseContent>;
     }
-    debugger;
-    if (this.props.sortCriteria && this.listRef) {
-      this.listRef.focus();
+    if (sortCriteriaChanged) {
+      this.listRef && this.listRef.focus();
     }
     return (
       <ExpandCollapseContent>
