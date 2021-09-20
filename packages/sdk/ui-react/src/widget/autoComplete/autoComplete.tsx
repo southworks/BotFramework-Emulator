@@ -62,7 +62,7 @@ export class AutoComplete extends Component<AutoCompleteProps, AutoCompleteState
     super(props);
 
     this.state = {
-      currentInput: '',
+      currentInput: ' ',
       id: AutoComplete.getId(),
       selectedIndex: undefined,
       showResults: false,
@@ -185,7 +185,7 @@ export class AutoComplete extends Component<AutoCompleteProps, AutoCompleteState
 
   private get value(): string {
     // if in 'controlled mode,' an empty string should be a valid input
-    if (this.props.value === '') {
+    if (this.props.value === ' ') {
       return this.props.value;
     }
     return this.props.value || this.state.currentInput;
