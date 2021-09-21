@@ -126,8 +126,8 @@ describe('<AutoComplete />', () => {
     expect(instance.value).toBe('frank');
 
     // controlled with an empty string
-    wrapper.setProps({ value: '' });
-    expect(instance.value).toBe('');
+    wrapper.setProps({ value: ' ' });
+    expect(instance.value).toBe(' ');
   });
 
   it('it should generate an option id', () => {
