@@ -32,7 +32,7 @@
 //
 
 import React from 'react';
-import { Column, Row, LinkButton, MediumHeader, SmallHeader } from '@bfemulator/ui-react';
+import { Column, Row, LinkButton, SmallHeader } from '@bfemulator/ui-react';
 import { TunnelCheckTimeInterval, TunnelError, TunnelStatus } from '@bfemulator/app-shared';
 
 import { GenericDocument } from '../../layout';
