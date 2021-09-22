@@ -99,6 +99,7 @@ export class AutoComplete extends Component<AutoCompleteProps, AutoCompleteState
           placeholder={placeholder}
           type="text"
           value={value}
+          aria-hidden={value ? false : true}
           aria-activedescendant={this.getOptionId(this.state.selectedIndex)}
           aria-autocomplete="list"
           aria-controls={this.listboxId}

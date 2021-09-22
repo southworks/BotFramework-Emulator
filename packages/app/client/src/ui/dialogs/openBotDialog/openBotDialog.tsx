@@ -167,6 +167,7 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
               onChange={this.onInputChange}
               placeholder="Optional"
               value={appId}
+              aria-hidden={appId ? false : true}
             />
             <TextField
               inputContainerClassName={openBotStyles.inputContainerRow}
@@ -176,6 +177,7 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
               placeholder="Optional"
               type="password"
               value={appPassword}
+              aria-hidden={appPassword ? false : true}
             />
           </Row>
           {!isDebug && (
@@ -187,6 +189,7 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
                 onChange={this.onInputChange}
                 placeholder="Optional"
                 value={speechRegion}
+                aria-hidden={speechRegion ? false : true}
               />
               <TextField
                 inputContainerClassName={openBotStyles.inputContainerRow}
@@ -196,6 +199,7 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
                 placeholder="Optional"
                 type="password"
                 value={speechKey}
+                aria-hidden={speechKey ? false : true}
               />
             </Row>
           )}
@@ -208,6 +212,7 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
               placeholder="Optional"
               type="number"
               value={randomSeed}
+              aria-hidden={randomSeed ? false : true}
             />
             <TextField
               inputContainerClassName={openBotStyles.inputContainerRow}
@@ -217,6 +222,7 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
               placeholder="Optional"
               type="number"
               value={randomValue}
+              aria-hidden={randomValue ? false : true}
             />
           </Row>
           <Row className={openBotStyles.rowOverride}>
