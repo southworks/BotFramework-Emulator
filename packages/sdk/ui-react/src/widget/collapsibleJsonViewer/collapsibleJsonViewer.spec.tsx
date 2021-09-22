@@ -110,7 +110,7 @@ const mockTreeHTMLText = `
       </ul>
     </li>
   </ul>
-  <div id="ariaRegion" role="region" aria-live="polite" className={styles.ariaRegion}>text content</div?
+  <div id="ariaRegion" role="region" aria-live="polite" className={styles.ariaRegion}>text content</div>
 </div>`;
 
 let jsonViewerWrapper;
