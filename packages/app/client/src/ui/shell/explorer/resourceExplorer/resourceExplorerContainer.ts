@@ -32,6 +32,8 @@
 //
 import { IFileService } from 'botframework-config/lib/schema';
 import { ComponentClass } from 'react';
+import { ResourcesSettingsContainer } from '../../../dialogs';
+import { DialogService } from '../../../dialogs/service';
 import { connect } from 'react-redux';
 import {
   openContextMenuForResource,
@@ -53,7 +55,8 @@ const mapDispatchToProps = (dispatch: (...args: any[]) => void): ResourceExplore
   openContextMenuForService: (resource: IFileService) => dispatch(openContextMenuForResource(resource)),
   renameResource: resource => dispatch(renameResource(resource)),
   openResource: resource => dispatch(openResource(resource)),
-  openResourcesSettings: (dialog: ComponentClass<any>) => dispatch(openResourcesSettings({ dialog })),
+  openResourcesSettings: (dialog: ComponentClass<any>) =>
+    DialogService.showDialog(ResourcesSettingsContainer, openResourcesSettings({ dialog })).catch(),
   window,
 });
 
