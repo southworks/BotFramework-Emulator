@@ -46,7 +46,7 @@ export default {
   base05: background,
   base06: background,
   base07: background,
-  base08: '#605E5C',
+  base08: '#605e5c',
   base09: booleanNumber,
   base0A: '#f4bf75',
   base0B: string,
