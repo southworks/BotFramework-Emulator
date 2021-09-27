@@ -55,6 +55,7 @@ import * as styles from './appSettingsEditor.scss';
 export interface AppSettingsEditorProps {
   documentId?: string;
   dirty?: boolean;
+  refocus?: boolean;
   framework?: FrameworkSettings;
   ngrokTunnelStatus?: TunnelStatus;
   ngrokLastPingInterval?: TunnelCheckTimeInterval;
@@ -71,6 +72,7 @@ export interface AppSettingsEditorProps {
 export interface AppSettingsEditorState extends Partial<FrameworkSettings> {
   dirty?: boolean;
   pendingUpdate?: boolean;
+  refocus?: boolean;
 }
 
 function shallowEqual(x: any, y: any) {
@@ -92,6 +94,7 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
     return {
       ...newProps.framework,
       dirty: newProps.dirty,
+      refocus: newProps.refocus,
       pendingUpdate: false,
     };
   }
@@ -121,6 +124,11 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
     const inputProps = {
       disabled: !useCustomId,
     };
+
+    if (this.state.refocus) {
+      this.pathToNgrokInputRef.focus();
+      this.setState({ refocus: false });
+    }
 
     return (
       <GenericDocument className={styles.appSettingsEditor}>
