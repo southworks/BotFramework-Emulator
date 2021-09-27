@@ -83,6 +83,11 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
   public state = {} as AppSettingsEditorState;
   private pathToNgrokInputRef: HTMLInputElement;
 
+  constructor(props) {
+    super(props);
+    this.state = { refocus: true };
+  }
+
   public static getDerivedStateFromProps(
     newProps: AppSettingsEditorProps,
     prevState: AppSettingsEditorState
