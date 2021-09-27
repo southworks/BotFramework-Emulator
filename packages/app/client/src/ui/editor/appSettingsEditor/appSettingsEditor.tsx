@@ -126,8 +126,9 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
     };
 
     if (this.state.refocus) {
-      this.pathToNgrokInputRef.focus();
-      this.setState({ refocus: false });
+      if (this.pathToNgrokInputRef) {
+        this.pathToNgrokInputRef.focus();
+      }
     }
 
     return (
