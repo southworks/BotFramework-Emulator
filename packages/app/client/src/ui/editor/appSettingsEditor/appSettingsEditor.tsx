@@ -93,7 +93,14 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
     prevState: AppSettingsEditorState
   ): AppSettingsEditorState {
     if (newProps.framework.hash === prevState.hash) {
-      return prevState;
+      if (newProps.dirty === prevState.dirty) {
+        return prevState;
+      } else {
+        return {
+          ...prevState,
+          dirty: newProps.dirty,
+        };
+      }
     }
 
     return {
@@ -104,7 +111,7 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
     };
   }
 
-  public componentDidMount(): void {
+  public componentDidUpdate() {
     if (this.pathToNgrokInputRef) {
       this.pathToNgrokInputRef.focus();
     }
