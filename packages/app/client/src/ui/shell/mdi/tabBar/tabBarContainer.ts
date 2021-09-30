@@ -41,6 +41,7 @@ import {
   setActiveTab,
   splitTab,
   SharedConstants,
+  setDirtyFlag,
 } from '@bfemulator/app-shared';
 
 import { getTabGroupForDocument } from '../../../../state/helpers/editorHelpers';
@@ -76,6 +77,7 @@ const mapDispatchToProps = (dispatch): TabBarProps => ({
     dispatch(close(getTabGroupForDocument(documentId), documentId));
     dispatch(closeConversation(documentId));
   },
+  setDirtyFlag: (documentId: string, dirty: boolean) => dispatch(setDirtyFlag(documentId, dirty)),
 });
 
 export const TabBarContainer = connect(mapStateToProps, mapDispatchToProps)(TabBar);
