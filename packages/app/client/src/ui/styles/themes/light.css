@@ -221,6 +221,7 @@ html {
   --my-bots-path-color: var(--neutral-10);
   --my-bots-path-hover-color: var(--neutral-11);
   --my-bots-scrollbar-color: rgba(136, 136, 136, 0.5);
+  --webkit-scrollbar-thumb-color: rgba(136, 136, 136, 0.5);
 
   /* Status Bar */
   --status-bar-bg: #007ACC;

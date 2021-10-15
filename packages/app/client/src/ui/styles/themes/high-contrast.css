@@ -219,6 +219,7 @@ html {
   --my-bots-entry-color: var(--neutral-1);
   --my-bots-path-color: var(--neutral-1);
   --my-bots-scrollbar-color: var(--neutral-1);
+  --webkit-scrollbar-thumb-color: var(--neutral-1);
 
   /* Status Bar */
   --status-bar-bg: #007ACC;
