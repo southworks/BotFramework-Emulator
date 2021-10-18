@@ -76,6 +76,7 @@ const mapDispatchToProps = (dispatch): TabBarProps => ({
     dispatch(close(getTabGroupForDocument(documentId), documentId));
     dispatch(closeConversation(documentId));
   },
+  setRefocus: (documentId: string, refocus: boolean) => dispatch(setDirtyFlag(documentId, refocus)),
 });
 
 export const TabBarContainer = connect(mapStateToProps, mapDispatchToProps)(TabBar);

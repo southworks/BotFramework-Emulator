@@ -41,6 +41,7 @@ export enum EditorActions {
   closeAll = 'EDITOR/CLOSE_ALL',
   dropTabOnLeftOverlay = 'EDITOR/DROP_TAB_ON_LEFT_OVERLAY',
   setDirtyFlag = 'EDITOR/SET_DIRTY_FLAG',
+  setRefocusFlag = 'EDITOR/SET_REFOCUS_FLAG',
   open = 'EDITOR/OPEN',
   setActiveTab = 'EDITOR/SET_ACTIVE_TAB',
   setActiveEditor = 'EDITOR/SET_ACTIVE_EDITOR',
@@ -79,6 +80,14 @@ export interface SetDirtyFlagAction {
   payload: {
     documentId: string;
     dirty: boolean;
+  };
+}
+
+export interface SetRefocusFlagAction {
+  type: EditorActions.setRefocusFlag;
+  payload: {
+    documentId: string;
+    refocus: boolean;
   };
 }
 
@@ -224,6 +233,16 @@ export function setDirtyFlag(documentId: string, dirty: boolean): SetDirtyFlagAc
     payload: {
       documentId,
       dirty,
+    },
+  };
+}
+
+export function setRefocusFlag(documentId: string, refocus: boolean): SetRefocusFlagAction {
+  return {
+    type: EditorActions.setRefocusFlag,
+    payload: {
+      documentId,
+      refocus,
     },
   };
 }

@@ -76,6 +76,7 @@ export interface Document<M = any> {
   mode: EmulatorMode;
   ui?: DocumentUI;
   userId: string;
+  refocus?: boolean;
 }
 
 export interface DocumentUI {

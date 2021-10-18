@@ -65,6 +65,7 @@ export interface TabBarProps {
   enablePresentationMode?: () => void;
   setActiveTab?: (documentId: string) => void;
   closeTab?: (documentId: string) => void;
+  setRefocus?: (documentId: string, refocus: boolean) => void;
 }
 
 export interface TabBarState {
@@ -111,6 +112,16 @@ export class TabBar extends React.Component<TabBarProps, TabBarState> {
           scrollable.scrollLeft = leftOffset;
         }
       }
+    }
+    // Set flag to re-render the App Setttings component
+    if (
+      this.props.activeDocumentId != prevProps.activeDocumentId &&
+      this.props.activeDocumentId == DOCUMENT_ID_APP_SETTINGS
+    ) {
+      this.props.setRefocus(
+        this.props.activeDocumentId,
+        this.props.documents[DOCUMENT_ID_APP_SETTINGS].refocus ? false : true
+      );
     }
   }
 
@@ -180,6 +191,7 @@ export class TabBar extends React.Component<TabBarProps, TabBarState> {
       const commonProps = {
         active: isActive,
         dirty: document.dirty,
+        refocus: document.refocus,
         documentId: documentId,
         label: this.getTabLabel(document),
         onCloseClick: this.props.closeTab,
