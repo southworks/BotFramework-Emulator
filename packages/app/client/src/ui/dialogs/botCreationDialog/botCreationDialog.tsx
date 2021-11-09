@@ -124,7 +124,7 @@ export class BotCreationDialog extends React.Component<BotCreationDialogProps, B
             data-prop="name"
             onChange={this.onInputChange}
             label={'Bot name'}
-            required={true}
+            aria-required={true}
             name={'create-bot-name'}
           />
           <TextField
@@ -132,7 +132,7 @@ export class BotCreationDialog extends React.Component<BotCreationDialogProps, B
             data-prop="endpoint"
             placeholder={endpointPlaceholder}
             label={'Endpoint URL'}
-            required={true}
+            aria-required={true}
             value={this.state.endpoint.endpoint}
             name={'create-bot-url'}
           />
