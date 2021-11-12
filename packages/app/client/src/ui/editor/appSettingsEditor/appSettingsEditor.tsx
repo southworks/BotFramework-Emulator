@@ -135,7 +135,7 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
         <Row>
           <Column className={styles.spacing}>
             <div>
-              <legend>Service</legend>
+              <h2>Service</h2>
               <p>
                 <LinkButton linkRole={true} onClick={this.onNgrokDocsClick}>
                   ngrok
@@ -212,7 +212,7 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
           </Column>
           <Column className={[styles.rightColumn, styles.spacing].join(' ')}>
             <div>
-              <legend>User settings</legend>
+              <h2>User settings</h2>
               <Checkbox
                 className={styles.checkboxOverrides}
                 checked={use10Tokens}
@@ -256,7 +256,7 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
             </div>
 
             <div>
-              <legend>Application Updates</legend>
+              <h2>Application Updates</h2>
               <Checkbox
                 className={styles.checkboxOverrides}
                 checked={autoUpdate}
@@ -273,7 +273,7 @@ export class AppSettingsEditor extends React.Component<AppSettingsEditorProps, A
               />
             </div>
             <div>
-              <legend>Data Collection</legend>
+              <h2>Data Collection</h2>
               <Checkbox
                 className={styles.checkboxOverrides}
                 checked={collectUsageData}
