@@ -75,7 +75,6 @@ export class TabBar extends React.Component<TabBarProps, TabBarState> {
   private readonly childRefs: HTMLElement[] = [];
   private _scrollable: HTMLElement;
   private activeIndex: number;
-  private liveChatRef: HTMLElement;
 
   constructor(props: TabBarProps) {
     super(props);
@@ -90,9 +89,6 @@ export class TabBar extends React.Component<TabBarProps, TabBarState> {
 
   public componentDidMount() {
     window.addEventListener('keydown', this.onKeyDown);
-    /*if (this.liveChatRef) {
-      this.liveChatRef.focus();
-    }*/
   }
 
   public componentWillUnmount() {
@@ -303,7 +299,4 @@ export class TabBar extends React.Component<TabBarProps, TabBarState> {
         return '';
     }
   }
-  private setLiveChatRef = (ref: HTMLElement): void => {
-    this.liveChatRef = ref;
-  };
 }
