@@ -398,7 +398,7 @@ export class Inspector extends React.Component<InspectorProps, InspectorState> {
     const id = event.currentTarget.name;
 
     if (id == 'copyJson') {
-      this.props.showMessage('Copy to clipboard', 'JSON copied.');
+      this.props.showMessage('Copy', 'Activity JSON copied to clipboard.');
       return clipboard.writeText(JSON.stringify(this.state.inspectObj, null, 2));
     }
 
