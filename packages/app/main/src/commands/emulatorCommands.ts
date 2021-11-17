@@ -197,7 +197,6 @@ export class EmulatorCommands {
     const bClearState = await this.commandService.call(SharedConstants.Commands.Electron.ShowMessageBox, true, {
       buttons: ['Cancel', 'OK'],
       cancelId: 0,
-      defaultId: 1,
       message: signedInMessage,
       type: 'question',
     });
