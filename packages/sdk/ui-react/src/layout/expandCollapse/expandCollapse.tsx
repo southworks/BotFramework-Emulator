@@ -121,6 +121,7 @@ export class ExpandCollapse extends React.Component<ExpandCollapseProps, ExpandC
       this.onToggleExpandedButtonClick();
     }
   };
+
   private setElementRef = (ref: HTMLElement): void => {
     const { elementRef } = this.props;
     if (elementRef) {
