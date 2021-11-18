@@ -90,10 +90,6 @@
                 "aria-selected": true,
                 "title": "Hide diff",
                 "aria-label": "Hide diff"
-              },
-              "disabled": {
-                "aria-disabled": true,
-                "title":"Disabled diff"
               }
             }
           },
