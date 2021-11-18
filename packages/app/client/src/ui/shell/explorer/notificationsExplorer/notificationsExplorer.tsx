@@ -41,6 +41,7 @@ import { NotificationManager } from '../../../../notificationManager';
 
 import { Notification } from './notification';
 import * as styles from './notificationsExplorer.scss';
+import { ariaAlertService } from '../../../a11y';
 
 interface NotificationExplorerProps {
   notifications?: string[];
@@ -55,6 +56,12 @@ class NotificationsExplorerComp extends React.Component<NotificationExplorerProp
   public render() {
     const { notifications = [] } = this.props;
     const clearAllButton = notifications.length ? this.renderClearAllButton() : null;
+
+    if (notifications.length) {
+      ariaAlertService.alert(`${notifications.length} new notifications`);
+    } else {
+      ariaAlertService.alert(`No new notifications`);
+    }
 
     // max-height: 100% of explorer pane - 20px (Clear all button height) - 40px (Explorer title height)
     return (
