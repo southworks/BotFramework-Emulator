@@ -174,7 +174,6 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
               name="appPassword"
               onChange={this.onInputChange}
               placeholder="Optional"
-              type="password"
               value={appPassword}
             />
           </Row>
