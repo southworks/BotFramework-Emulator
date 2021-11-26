@@ -149,7 +149,7 @@ export class AutoComplete extends Component<AutoCompleteProps, AutoCompleteState
     const { errorMessage } = this.props;
     if (errorMessage) {
       return (
-        <sub id={this.errorMessageId} className={styles.errorMessage}>
+        <sub id={this.errorMessageId} className={styles.errorMessage} aria-live={'polite'}>
           {errorMessage}
         </sub>
       );
