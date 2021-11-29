@@ -134,8 +134,8 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
       mode,
       isDebug,
       isAzureGov,
-      randomSeed,
-      randomValue,
+      randomSeed = '',
+      randomValue = '',
       speechKey,
       speechRegion,
     } = this.state;
@@ -204,23 +204,17 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
               inputContainerClassName={openBotStyles.inputContainerRow}
               name="randomSeed"
               label="Test Options - Random Seed"
-              onChange={this.onInputChange}
+              onChange={this.onNumericInputChange}
               placeholder="Optional"
-              type="number"
               value={randomSeed}
-              min="0"
-              max="9999"
             />
             <TextField
               inputContainerClassName={openBotStyles.inputContainerRow}
               label="Test Options - Random Value"
               name="randomValue"
-              onChange={this.onInputChange}
+              onChange={this.onNumericInputChange}
               placeholder="Optional"
-              type="number"
               value={randomValue}
-              min="0"
-              max="9999"
             />
           </Row>
           <Row className={openBotStyles.rowOverride}>
@@ -263,6 +257,14 @@ export class OpenBotDialog extends Component<OpenBotDialogProps, OpenBotDialogSt
     const { type, files, value, name } = event.target;
     const newValue = type === 'file' ? files.item(0).path : value;
     this.setState({ [name]: newValue });
+  };
+
+  private onNumericInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const { value, name } = event.target;
+    const numberRegEx = /^[0-9\b]+$/;
+    if (value === '' || numberRegEx.test(value)) {
+      this.setState({ [name]: value });
+    }
   };
 
   private onChannelServiceCheckboxClick = (event: MouseEvent<HTMLInputElement>) => {
