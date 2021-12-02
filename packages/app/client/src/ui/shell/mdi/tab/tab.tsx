@@ -195,7 +195,7 @@ export class Tab extends React.Component<TabProps, TabState> {
   private get announceTabState(): React.ReactNode {
     const { active, label } = this.props;
     return (
-      <span id="tabState" aria-live={'polite'}>
+      <span id="tabState" aria-live={'polite'} className={styles.ariaLiveRegion}>
         {active ? `${label} tab selected` : ''}
       </span>
     );
