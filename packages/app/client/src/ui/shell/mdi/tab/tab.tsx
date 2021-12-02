@@ -34,6 +34,7 @@
 import { TruncateText } from '@bfemulator/ui-react';
 import * as React from 'react';
 import { DragEvent, KeyboardEvent, SyntheticEvent } from 'react';
+import { isLinux } from '@bfemulator/app-shared';
 
 import { getTabGroupForDocument } from '../../../../state/helpers/editorHelpers';
 import { DOCUMENT_ID_APP_SETTINGS, DOCUMENT_ID_MARKDOWN_PAGE, DOCUMENT_ID_WELCOME_PAGE } from '../../../../constants';
@@ -115,6 +116,7 @@ export class Tab extends React.Component<TabProps, TabState> {
         >
           <span />
         </button>
+        {isLinux() ? this.announceTabState : null}
       </div>
     );
   }
@@ -189,4 +191,13 @@ export class Tab extends React.Component<TabProps, TabState> {
   private setTabRef = (ref: HTMLButtonElement): void => {
     this.tabRef = ref;
   };
+
+  private get announceTabState(): React.ReactNode {
+    const { active, label } = this.props;
+    return (
+      <span id="tabState" aria-live={'polite'}>
+        {active ? `${label} tab selected` : ''}
+      </span>
+    );
+  }
 }
