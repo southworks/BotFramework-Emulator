@@ -41,7 +41,6 @@ import { NotificationManager } from '../../../../notificationManager';
 
 import { Notification } from './notification';
 import * as styles from './notificationsExplorer.scss';
-import { ariaAlertService } from '../../../a11y';
 
 interface NotificationExplorerProps {
   notifications?: string[];
@@ -49,6 +48,8 @@ interface NotificationExplorerProps {
 }
 
 class NotificationsExplorerComp extends React.Component<NotificationExplorerProps, Record<string, unknown>> {
+  private spanNotificationRef: HTMLSpanElement;
+
   constructor(props: NotificationExplorerProps) {
     super(props);
   }
@@ -57,11 +58,11 @@ class NotificationsExplorerComp extends React.Component<NotificationExplorerProp
     const { notifications = [] } = this.props;
     const clearAllButton = notifications.length ? this.renderClearAllButton() : null;
 
-    if (notifications.length) {
-      ariaAlertService.alert(`${notifications.length} new notifications`);
-    } else {
-      ariaAlertService.alert(`No new notifications`);
-    }
+    setTimeout(() => {
+      this.spanNotificationRef.innerText = notifications.length
+        ? `${notifications.length} new notifications`
+        : 'No new notifications';
+    }, 500);
 
     // max-height: 100% of explorer pane - 20px (Clear all button height) - 40px (Explorer title height)
     return (
@@ -77,6 +78,12 @@ class NotificationsExplorerComp extends React.Component<NotificationExplorerProp
             <p className={styles.noNotificationsMsg}>No new notifications.</p>
           )}
         </ul>
+        <span
+          id="spanNotification"
+          aria-live={'polite'}
+          ref={this.setSpanNotificationRef}
+          className={styles.ariaLiveRegion}
+        />
       </>
     );
   }
@@ -87,6 +94,10 @@ class NotificationsExplorerComp extends React.Component<NotificationExplorerProp
         Clear all
       </LinkButton>
     );
+  };
+
+  private setSpanNotificationRef = (ref: HTMLSpanElement): void => {
+    this.spanNotificationRef = ref;
   };
 }
 
