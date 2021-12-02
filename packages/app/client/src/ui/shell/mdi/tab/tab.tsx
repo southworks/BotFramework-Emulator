@@ -81,43 +81,45 @@ export class Tab extends React.Component<TabProps, TabState> {
     const iconClass = this.iconClass;
 
     return (
-      <div
-        className={`${styles.tab} ${activeClassName} ${draggedOverClassName}`}
-        draggable={true}
-        onDragOver={this.onDragOver}
-        onDragEnter={this.onDragEnter}
-        onDragStart={this.onDragStart}
-        onDrop={this.onDrop}
-        onDragLeave={this.onDragLeave}
-        onDragEnd={this.onDragEnd}
-        role="presentation"
-      >
-        {isLinux() ? this.announceTabState : null}
-        {this.props.children}
-        {!this.props.hideIcon && <span className={`${styles.editorTabIcon} ${iconClass}`} role="presentation" />}
-        <TruncateText className={styles.truncatedTabText}>{label}</TruncateText>
-        {this.props.dirty ? <span role="presentation">*</span> : null}
-        <div className={styles.tabSeparator} role="presentation" />
+      <>
         <div
-          className={styles.tabFocusTarget}
-          role="tab"
-          tabIndex={0}
-          aria-label={`${label}`}
-          aria-selected={active}
-          ref={this.setTabRef}
+          className={`${styles.tab} ${activeClassName} ${draggedOverClassName}`}
+          draggable={true}
+          onDragOver={this.onDragOver}
+          onDragEnter={this.onDragEnter}
+          onDragStart={this.onDragStart}
+          onDrop={this.onDrop}
+          onDragLeave={this.onDragLeave}
+          onDragEnd={this.onDragEnd}
+          role="presentation"
         >
-          &nbsp;
+          {this.props.children}
+          {!this.props.hideIcon && <span className={`${styles.editorTabIcon} ${iconClass}`} role="presentation" />}
+          <TruncateText className={styles.truncatedTabText}>{label}</TruncateText>
+          {this.props.dirty ? <span role="presentation">*</span> : null}
+          <div className={styles.tabSeparator} role="presentation" />
+          <div
+            className={styles.tabFocusTarget}
+            role="tab"
+            tabIndex={0}
+            aria-label={`${label}`}
+            aria-selected={active}
+            ref={this.setTabRef}
+          >
+            &nbsp;
+          </div>
+          <button
+            type="button"
+            title={`Close ${label} tab`}
+            className={styles.editorTabClose}
+            onKeyPress={this.onCloseButtonKeyPress}
+            onClick={this.onCloseClick}
+          >
+            <span />
+          </button>
         </div>
-        <button
-          type="button"
-          title={`Close ${label} tab`}
-          className={styles.editorTabClose}
-          onKeyPress={this.onCloseButtonKeyPress}
-          onClick={this.onCloseClick}
-        >
-          <span />
-        </button>
-      </div>
+        {isLinux() ? this.announceTabState : null}
+      </>
     );
   }
 
