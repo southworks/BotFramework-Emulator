@@ -92,6 +92,7 @@ export class Tab extends React.Component<TabProps, TabState> {
         onDragEnd={this.onDragEnd}
         role="presentation"
       >
+        {isLinux() ? this.announceTabState : null}
         {this.props.children}
         {!this.props.hideIcon && <span className={`${styles.editorTabIcon} ${iconClass}`} role="presentation" />}
         <TruncateText className={styles.truncatedTabText}>{label}</TruncateText>
@@ -116,7 +117,6 @@ export class Tab extends React.Component<TabProps, TabState> {
         >
           <span />
         </button>
-        {isLinux() ? this.announceTabState : null}
       </div>
     );
   }
