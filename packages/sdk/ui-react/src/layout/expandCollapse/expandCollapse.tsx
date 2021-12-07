@@ -37,7 +37,6 @@ import { KeyboardEvent } from 'react';
 import { filterChildren, hmrSafeNameComparison } from '../../utils';
 
 import * as styles from './expandCollapse.scss';
-import { button } from '../../widget/button/button.scss';
 
 export interface ExpandCollapseProps {
   expanded?: boolean;
