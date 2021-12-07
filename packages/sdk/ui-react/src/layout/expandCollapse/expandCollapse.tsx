@@ -37,6 +37,7 @@ import { KeyboardEvent } from 'react';
 import { filterChildren, hmrSafeNameComparison } from '../../utils';
 
 import * as styles from './expandCollapse.scss';
+import { button } from '../../widget/button/button.scss';
 
 export interface ExpandCollapseProps {
   expanded?: boolean;
@@ -70,7 +71,7 @@ export class ExpandCollapse extends React.Component<ExpandCollapseProps, ExpandC
           ref={this.setElementRefHandler}
           aria-expanded={expanded}
           aria-label={ariaLabel}
-          role="toolbar"
+          role="button"
           tabIndex={0}
           onKeyPress={onHeaderKeyPress}
           className={styles.header}
