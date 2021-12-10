@@ -62,39 +62,23 @@ export class MenuItemComp extends React.Component<MenuItemProps, Record<string, 
         return <li className={styles.menuSeparator}></li>;
 
       default:
-        if (subtext == undefined) {
-          return (
-            <li
-              aria-label={`${label}${disabled ? ' unavailable' : ''}${checked ? ' checked' : ''}`}
-              className={`${styles.menuItem} ${disabled ? styles.disabled : ''}`}
-              onClick={this.onClick}
-              onKeyDown={this.onKeyDown}
-              ref={focusHandler(index)}
-              role="menuitem"
-              tabIndex={-1}
-            >
-              {checked && <span className={styles.menuItemCheck} role="presentation" />}
-              {label}
-              {subtext && <span className={styles.menuItemSubtext}>{subtext}</span>}
-            </li>
-          );
-        } else {
-          return (
-            <li
-              aria-label={`${label}${subtext}${disabled ? ' unavailable' : ''}${checked ? ' checked' : ''}`}
-              className={`${styles.menuItem} ${disabled ? styles.disabled : ''}`}
-              onClick={this.onClick}
-              onKeyDown={this.onKeyDown}
-              ref={focusHandler(index)}
-              role="menuitem"
-              tabIndex={-1}
-            >
-              {checked && <span className={styles.menuItemCheck} role="presentation" />}
-              {label}
-              {subtext && <span className={styles.menuItemSubtext}>{subtext}</span>}
-            </li>
-          );
-        }
+        return (
+          <li
+            aria-label={`${label}${subtext ? subtext : ''}${disabled ? ' unavailable' : ''}${
+              checked ? ' checked' : ''
+            }`}
+            className={`${styles.menuItem} ${disabled ? styles.disabled : ''}`}
+            onClick={this.onClick}
+            onKeyDown={this.onKeyDown}
+            ref={focusHandler(index)}
+            role="menuitem"
+            tabIndex={-1}
+          >
+            {checked && <span className={styles.menuItemCheck} role="presentation" />}
+            {label}
+            {subtext && <span className={styles.menuItemSubtext}>{subtext}</span>}
+          </li>
+        );
     }
   }
 
