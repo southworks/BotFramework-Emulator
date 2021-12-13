@@ -75,7 +75,7 @@ export class AppMenu extends React.Component<AppMenuProps, Record<string, unknow
           const menuItemKey = menuItem.toLowerCase();
 
           return (
-            <li key={menuItemKey} role={menuItem}>
+            <li key={menuItemKey} role={'menuItem'}>
               <MenuButton className={styles.appMenuItem} items={this._menuTemplate[menuItemKey]}>
                 {menuItem}
               </MenuButton>
