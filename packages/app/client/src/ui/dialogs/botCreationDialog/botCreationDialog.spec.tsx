@@ -35,7 +35,6 @@ import { mount, ReactWrapper } from 'enzyme';
 import * as React from 'react';
 import { executeCommand, SharedConstants } from '@bfemulator/app-shared';
 import { CommandServiceImpl, CommandServiceInstance } from '@bfemulator/sdk-shared';
-import { createStore } from 'redux';
 
 import { ActiveBotHelper } from '../../helpers/activeBotHelper';
 import { ariaAlertService } from '../../a11y';
@@ -43,7 +42,7 @@ import { ariaAlertService } from '../../a11y';
 import { BotCreationDialog, BotCreationDialogState } from './botCreationDialog';
 import { BotCreationDialogContainer } from './botCreationDialogContainer';
 
-let mockState = {};
+const mockState = {};
 const mockStore = {
   dispatch: jest.fn(),
   getState: () => mockState,
