@@ -45,6 +45,7 @@ import {
   CONTENT_TYPE_TRANSCRIPT,
   CONTENT_TYPE_WELCOME_PAGE,
   CONTENT_TYPE_NGROK_DEBUGGER,
+  DOCUMENT_ID_APP_SETTINGS,
 } from '../../../../constants';
 import { Tab } from '../tab/tab';
 import { NgrokTabContainer } from '../tab/ngrokTabContainer';
@@ -65,6 +66,7 @@ export interface TabBarProps {
   enablePresentationMode?: () => void;
   setActiveTab?: (documentId: string) => void;
   closeTab?: (documentId: string) => void;
+  setDirtyFlag?: (documentId: string, dirty: boolean) => void;
 }
 
 export interface TabBarState {
@@ -111,6 +113,16 @@ export class TabBar extends React.Component<TabBarProps, TabBarState> {
           scrollable.scrollLeft = leftOffset;
         }
       }
+    }
+    // Set dirty flag to re-render the App Setttings component
+    if (
+      this.props.activeDocumentId != prevProps.activeDocumentId &&
+      this.props.activeDocumentId == DOCUMENT_ID_APP_SETTINGS
+    ) {
+      this.props.setDirtyFlag(
+        this.props.activeDocumentId,
+        this.props.documents[DOCUMENT_ID_APP_SETTINGS].dirty ? false : true
+      );
     }
   }
 
